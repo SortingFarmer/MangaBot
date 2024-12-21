@@ -12,10 +12,7 @@
 		"footNote": "MangaBot • © 2024 SortingFarmer",
 		"color": 16159302
 	},
-	"invite": {
-		"server": "https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=274878221376&integration_type=0&scope=bot+applications.commands",
-		"user": "https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=274878221376&integration_type=1&scope=bot+applications.commands"
-	},
+	"invite": "https://discord.com/oauth2/authorize?client_id=1319982304872894495",
 	"owner": {
 		"id": "809029647240790046",
 		"name": "SortingFarmer"

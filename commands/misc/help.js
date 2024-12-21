@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, AttachmentBuilder } = require("discord.js");
-const { embed, name, invite, supportServer, github } = require("../../config.json");
+const { embed } = require("../../config.json");
 const emoji = require("../../emojis.json");
 
 

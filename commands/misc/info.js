@@ -15,14 +15,9 @@ module.exports = {
         donate.setEmoji(emoji.doller);
 
         const serverInvite = new ButtonBuilder();
-        serverInvite.setLabel('Invite to Server');
+        serverInvite.setLabel('Invite bot');
         serverInvite.setStyle(ButtonStyle.Link);
-        serverInvite.setURL(invite.server);
-
-        const userInvite = new ButtonBuilder();
-        userInvite.setLabel('Add to User');
-        userInvite.setStyle(ButtonStyle.Link);
-        userInvite.setURL(invite.user);
+        serverInvite.setURL(invite);
 
         const supportServerInvite = new ButtonBuilder();
         supportServerInvite.setLabel('Support Server');
@@ -36,7 +31,7 @@ module.exports = {
 
 
         const row = new ActionRowBuilder();
-        row.addComponents(donate, serverInvite, userInvite, supportServerInvite, githubLink);
+        row.addComponents(donate, serverInvite, supportServerInvite, githubLink);
 
 
         await interaction.reply({
