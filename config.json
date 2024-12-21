@@ -15,5 +15,9 @@
 	"invite": {
 		"server": "https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=274878221376&integration_type=0&scope=bot+applications.commands",
 		"user": "https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=274878221376&integration_type=1&scope=bot+applications.commands"
+	},
+	"owner": {
+		"id": "809029647240790046",
+		"name": "SortingFarmer"
 	}
 }

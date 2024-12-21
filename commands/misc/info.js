@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require("discord.js");
-const { embed, name, invite, supportServer, github } = require("../../config.json");
+const { embed, name, invite, supportServer, github, owner } = require("../../config.json");
 const emoji = require("../../emojis.json");
 
 module.exports = {
@@ -9,8 +9,8 @@ module.exports = {
 
     async execute(interaction) {
         const donate = new ButtonBuilder();
-        donate.setCustomId('donate');
-        donate.setLabel('Donate');
+        donate.setCustomId('support');
+        donate.setLabel('Donation options');
         donate.setStyle(ButtonStyle.Secondary);
         donate.setEmoji(emoji.doller);
 
@@ -50,7 +50,9 @@ module.exports = {
                 //Mangadex requires that they get credit for using their API.
                 //Icons also requires credit for using their emojis, so I added these notes.
                 `\n\n**Credits:**` +
-                `\nThis bot utilizes *${emoji.mangadex} [MangaDex](https://mangadex.org/about)* to fetch titles, ratings, chapters, and more about various mangas. The emoji icons used in this bot are created by *${emoji.icons} [Icons](https://discord.gg/aPvvhefmt3)*.`,
+                `\nThis bot is owned and maintained by *[${owner.name}](https://discord.com/users/${owner.id})*. ` +
+                `It also utilizes *${emoji.mangadex} [MangaDex](https://mangadex.org/about)* to fetch titles, ratings, chapters, and more about various mangas. ` +
+                `The emoji icons used in this bot are created by *${emoji.icons} [Icons](https://discord.gg/aPvvhefmt3)*. `,
                 color: embed.color,
                 footer: {
                     text: embed.footNote,
