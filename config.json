@@ -1,5 +1,18 @@
 {
+	"name": "MangaBot",
 	"clientId": "1319982304872894495",
 	"guildId": "973661917291888680",
-    "supportServer": "https://discord.gg/sk5tBM9nx6"
+    "supportServer": "https://discord.gg/sk5tBM9nx6",
+	"embed": {
+		"logo": "./images/logo.png",
+		"logoName": "logo.png",
+		"banner": "./images/banner.png",
+		"bannerName": "banner.png",
+		"footNote": "MangaBot • © 2024 SortingFarmer",
+		"color": [246, 146, 70]
+	},
+	"invite": {
+		"server": "https://discord.com/oauth2/authorize?client_id=1319982304872894495&permissions=274878221376&integration_type=0&scope=bot+applications.commands",
+		"user": "https://discord.com/oauth2/authorize?client_id=1319982304872894495&permissions=274878221376&integration_type=1&scope=bot+applications.commands"
+	}
 }
