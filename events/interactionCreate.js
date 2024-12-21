@@ -4,7 +4,7 @@ const path = require('node:path');
 const { supportServer } = require('../config.json');
 const { error } = require('../emojis.json');
 
-const ignoreButton = ["confirm", "cancel", "link"];
+const ignoreButton = ["confirm", "cancel"];
 const ignoreSelectMenu = [];
 
 module.exports = {
@@ -21,14 +21,14 @@ module.exports = {
 
 			try {
 				await command.execute(interaction);
-			} catch (error) {
-				console.error(`There was an error while executing the ${interaction.commandName} command:\n${error}`);
+			} catch (e) {
+				console.error(`There was an error while executing the ${interaction.commandName} command:\n${e.message}\n${e.stack}`);
 				if (interaction.replied || interaction.deferred) {
 					await interaction.followUp({ content: `${error} There was an error while executing this command!\n`+ 
-					`Please report it in [the support server](${supportServer}).\n\nError:\n${error}`, ephemeral: true });
+					`Please report it in [the support server](${supportServer}).\n\nError:\n${e.message}`, ephemeral: true });
 				} else {
 					await interaction.reply({ content: `${error} There was an error while executing this command!\n` +
-					`Please report it in [the support server](${supportServer}).\n\nError:\n${error}`, ephemeral: true });
+					`Please report it in [the support server](${supportServer}).\n\nError:\n${e.message}`, ephemeral: true });
 				}
 			}
 		} else if (interaction.isButton()) {
@@ -47,7 +47,7 @@ module.exports = {
 						} catch (e) {
 							interaction.reply({ content: `${error} There was an error while executing this button!\n` +
 								`Please report it in [the support server](${supportServer}).\n\nError:\n${e}`, ephemeral: true });
-							console.error(`There was an error while running a button:\n${e}`);
+							console.error(`There was an error while running a button:\n${e.message}\n${e.stack}`);
 							return;
 						}
 					}
@@ -70,7 +70,7 @@ module.exports = {
 						} catch (e) {
 							interaction.reply({ content: `${error} There was an error while executing this select menu!\n` +
 								`Please report it in [the support server](${supportServer}).\n\nError:\n${e}`, ephemeral: true });
-							console.error(`There was an error while running a select menu:\n${e}`);
+							console.error(`There was an error while running a select menu:\n${e.message}\n${e.stack}`);
 							return;
 						}
 					}

@@ -129,5 +129,7 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# Discord bot token
+# My silly stuff
 token.json
+help.txt
+.zip

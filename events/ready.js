@@ -5,6 +5,6 @@ module.exports = {
 	once: true,
 	execute(client) {
 		console.log(`Ready! Logged in as ${client.user.tag}`);
-        client.user.setActivity({ name: "/help", type: ActivityType.Watching});
+        client.user.setActivity({ name: "/help and /info", type: ActivityType.Watching});
 	},
 };
