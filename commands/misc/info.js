@@ -37,7 +37,7 @@ module.exports = {
         await interaction.reply({
             files: [new AttachmentBuilder(embed.logo, embed.logoName)],
 			embeds: [{
-                title: "Help Menu",
+                title: "Informations Menu",
                 description: `Introducing ${name}, a versatile bot designed to enhance your manga reading experience. With ${name}, you can effortlessly search for your favorite manga titles and discover new ones using a variety of filters. Create personalized lists of the manga you love and follow them to receive notifications whenever a new chapter is released.` +
                 `\n\n${name} can be seamlessly integrated into your server, where it will post updates in a designated channel whenever new manga chapters are available. Additionally, you have the option to add ${name} to your user apps, allowing you to access its features and look up manga from anywhere, at any time.` + 
                 `\n\nExperience the convenience and excitement of staying up-to-date with your favorite manga series with ${name}!` +

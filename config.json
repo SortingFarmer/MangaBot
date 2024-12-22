@@ -1,5 +1,12 @@
 {
 	"name": "MangaBot",
+	"description": "A simple bot that uses the MangaDex api to view, search and follow mangas on discord.",
+	"mangadex": {
+		"api": "https://api.mangadex.org",
+		"img": "https://uploads.mangadex.org/covers",
+		"url": "https://mangadex.org",
+		"forum": "https://forums.mangadex.org/threads"
+	},
 	"github": "https://github.com/SortingFarmer/MangaBot",
 	"clientId": "1319982304872894495",
 	"guildId": "973661917291888680",

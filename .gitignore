@@ -132,4 +132,5 @@ dist
 # My silly stuff
 token.json
 help.txt
-.zip
+*.zip
+*.db
