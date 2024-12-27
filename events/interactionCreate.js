@@ -36,13 +36,21 @@ module.exports = {
 			if (!ignoreButton.includes(interaction.customId)) {
 				const buttonPath = path.join(__dirname, 'button');
 				const buttonFiles = fs.readdirSync(buttonPath).filter(file => file.endsWith('.js'));
-
+		
 				for (const file of buttonFiles) {
 					const filePath = path.join(buttonPath, file);
 					const button = require(filePath);
-					if (button.name === interaction.customId) {
+		
+					let data;
+					try {
+						data = JSON.parse(interaction.customId);
+					} catch (e) {
+						data = { type: interaction.customId };
+					}
+		
+					if (button.name === data.type) {
 						try {
-							await button.execute(interaction);
+							await button.execute(interaction, data);
 							return;
 						} catch (e) {
 							interaction.reply({ content: `${error} There was an error while executing this button!\n` +
@@ -77,6 +85,8 @@ module.exports = {
 				}
 			}
 			interaction.reply({ content: `${error} This select menu is not registered.`, ephemeral: true });
+		} else {
+			interaction.reply({ content: `${error} This interaction is not supported.`, ephemeral: true });
 		}
 	},
 };

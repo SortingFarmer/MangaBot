@@ -1,9 +1,19 @@
 {
   "name": "mangabot",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A simple bot that uses the MangaDex api to view, search and follow mangas on discord.",
   "main": "main.js",
   "keywords": [],
   "author": "",
-  "license": "GPL-3.0"
+  "license": "GPL-3.0",
+  "scripts": {
+    "start": "nodemon main.js"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "discord.js": "^12.5.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
 }

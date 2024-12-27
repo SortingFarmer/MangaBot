@@ -20,20 +20,17 @@ module.exports = {
                     value: `**/help** - Shows this help menu\n` +
                         `**/info** - Provides information about the bot\n` +
                         `**/ping** - Shows the bot's ping\n` +
-                        `**/version** - Shows the bot's version\n` +
-                        `**/invite** - Shows the invite link for the bot\n` +
                         `**/stats** - Shows the bot's statistics\n`,
                 }, {
                     name: "Manga commands",
                     value: `**/manga [id]** - Displays a manga\n` +
-                        `**/chapter [id]** - Searches for a chapter\n` +
                         `**/follow [id]** - Follows a manga\n` +
-                        `**/list (page number)** - Shows a list of followed manga\n` +
                         `**/unfollow [id]** - Unfollows a manga\n` +
-                        `**/latest (page number)** - Shows the latest chapters\n` +
+                        `**/list (page number)** - Shows a list of followed manga\n` +
+                        `**/latest (page number)** - Shows the latest followed chapters\n` +
+                        `**/browse** - Browse some mangas\n` +
                         `**/random (ammount of mangas)** - Shows a random manga\n` +
-                        `**/search [name]** - Searches for a manga\n` +
-                        `**/top (number of mangas)** - Shows the top rated manga\n`
+                        `**/search [name]** - Searches for a manga\n`
                 }],
                 color: embed.color,
                 footer: {
