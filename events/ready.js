@@ -1,4 +1,5 @@
 const { Events, ActivityType } = require('discord.js');
+const embed = require('../config.json');
 
 module.exports = {
 	name: Events.ClientReady,
@@ -6,5 +7,5 @@ module.exports = {
 	execute(client) {
 		console.log(`Ready! Logged in as ${client.user.tag}`);
         client.user.setActivity({ name: "/help and /info", type: ActivityType.Watching});
-	},
+	}
 };

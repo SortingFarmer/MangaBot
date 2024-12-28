@@ -51,9 +51,12 @@ module.exports = {
                     name: "**ToS and Privacy Policy:**",
                     value: `By using ${name}, you agree to our [Terms of Service](${legal.terms}) and [Privacy Policy](${legal.privacy}).`
                 }, {
-                    name: "**Other notes:**",
+                    name: "**Version:**",
                     value: `The current version of ${name} is *${version}*\n` +
-                        `This bot is licensed under the *${license}* license.\n` +
+                        `You can view the latest release and its notes on the [GitHub](${github}/commit/main).`
+                }, {
+                    name: "**Other notes:**",
+                    value: `This bot is licensed under the *${license}* license.\n` +
                         `We will not display any pornographic content.\n` +
                         `If you encounter any issues or have any suggestions, please feel free to contact us on our [Support Server](${supportServer}) or submit a bug report on our [GitHub](${github}).`
                 }],

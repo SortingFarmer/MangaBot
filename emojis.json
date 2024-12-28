@@ -3,7 +3,7 @@
     "awardcup": "<:awardcup:1232272234882662420>",
     "question": "<:question:1231261885245161532>",
     "share": "<:share:1231253501531914261>",
-    "icons_exlamation": "<:icons_exclamation:1231252423410978957>",
+    "exlamation": "<:exclamation:1231252423410978957>",
     "forumLocked": "<:forumLocked:1231216436224200725>",
     "award": "<:award:1231216401159819395>",
     "announcement": "<:announcement:1231216342410072074>",
@@ -30,5 +30,7 @@
     "DC_booster2": "<:DC_booster2:1049455948864962591>",
     "DC_booster3": "<:DC_booster3:1049455919295123496>",
     "error": "<:error:1320034144066998404>",
-    "mangadex": "<:mangadex:1320131014508417095>"
+    "mangadex": "<:mangadex:1320131014508417095>",
+    "loop": "<:loop:1322657522267717686>",
+    "loading": "<:loading:1322658192861298709>"
 }
