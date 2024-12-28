@@ -1,6 +1,6 @@
 {
   "name": "mangabot",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "A simple bot that uses the MangaDex api to view, search and follow mangas on discord.",
   "main": "main.js",
   "keywords": [],

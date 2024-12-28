@@ -15,7 +15,7 @@ module.exports = {
         ),
 
     async execute(interaction) {
-        await interaction.deferReply({ ephemeral: false });
+        await interaction.deferReply();
         let resultM;
         let resultR;
         
@@ -46,11 +46,7 @@ module.exports = {
         } else {
             const follow = new ButtonBuilder();
             follow.setLabel('Follow manga');
-            follow.setCustomId({
-                type: "follow",
-                manga: interaction.options.getString('id'),
-                user: interaction.user
-            }.toString())
+            follow.setCustomId("follow")
             follow.setStyle(ButtonStyle.Primary);
             follow.setDisabled(true);
 

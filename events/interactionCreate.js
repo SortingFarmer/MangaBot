@@ -41,16 +41,9 @@ module.exports = {
 					const filePath = path.join(buttonPath, file);
 					const button = require(filePath);
 		
-					let data;
-					try {
-						data = JSON.parse(interaction.customId);
-					} catch (e) {
-						data = { type: interaction.customId };
-					}
-		
-					if (button.name === data.type) {
+					if (button.name === interaction.customId) {
 						try {
-							await button.execute(interaction, data);
+							await button.execute(interaction);
 							return;
 						} catch (e) {
 							interaction.reply({ content: `${error} There was an error while executing this button!\n` +
