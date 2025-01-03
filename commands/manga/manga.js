@@ -10,19 +10,20 @@ module.exports = {
         .setDescription("Display a manga.")
         .addStringOption(option =>
             option.setName('id')
-            .setDescription('The ID of the manga you want to display.')
+            .setDescription('The ID/Link (mangadex only) of the manga you want to display.')
             .setRequired(true)
         ),
 
     async execute(interaction) {
         await interaction.deferReply();
+        let mangaId = interaction.options.getString('id').match(/https:\/\/mangadex\.org\/title\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\//)[1];
         let resultM;
         let resultR;
         
         try {
             resultM = await axios({
                 method: 'get',
-                url: `${mangadex.api}/manga/${interaction.options.getString('id')}`,
+                url: `${mangadex.api}/manga/${mangaId}`,
                 params: {
                     includes: ["cover_art", "author", "artist", "tag"]
                 }
@@ -32,7 +33,7 @@ module.exports = {
                 method: 'GET',
                 url: `${mangadex.api}/statistics/manga`,
                 params: {
-                    manga: [interaction.options.getString('id')]
+                    manga: [mangaId]
                 }
             });
         } catch (error) {
@@ -53,15 +54,15 @@ module.exports = {
             const link = new ButtonBuilder();
             link.setLabel('Read on MangaDex');
             link.setStyle(ButtonStyle.Link);
-            link.setURL(`${mangadex.url}/title/${interaction.options.getString('id')}`);
+            link.setURL(`${mangadex.url}/title/${mangaId}`);
 
             const comments = new ButtonBuilder();
             comments.setLabel('Comments');
             comments.setStyle(ButtonStyle.Link);
-            comments.setURL(`${mangadex.forum}/${resultR.data.statistics[interaction.options.getString('id')].comments.threadId}`);
+            comments.setURL(`${mangadex.forum}/${resultR.data.statistics[mangaId].comments.threadId}`);
 
             const row = new ActionRowBuilder();
-            resultR.data.statistics[interaction.options.getString('id')].comments == null ? row.addComponents(follow, link) : row.addComponents(follow, link, comments);
+            resultR.data.statistics[mangaId].comments == null ? row.addComponents(follow, link) : row.addComponents(follow, link, comments);
 
             let altTitle = "";
             manga.attributes.altTitles.forEach(altTitles => Object.entries(altTitles).forEach(([key, value]) => altTitle += `**${key}:** ${value}\n` ));
@@ -99,11 +100,12 @@ module.exports = {
                             `**Status:** ${manga.attributes.status}\n` +
                             `${lastVolume}` +
                             `${lastChapter}` +
-                            `**Year:** ${manga.attributes.year}` +
+                            `**Year:** ${manga.attributes.year}\n` +
                             `**Tags:** ${manga.attributes.tags.map(r => r.attributes.name.en).join(", ")}\n` +
-                            `**Comments:** ${resultR.data.statistics[interaction.options.getString('id')].comments.repliesCount || 0}\n` +
-                            `**Follows:** ${resultR.data.statistics[interaction.options.getString('id')].follows}\n` +
-                            `**Rating:** ${resultR.data.statistics[interaction.options.getString('id')].rating.bayesian.toFixed(2)}\n` +
+                            `**Comments:** ${resultR.data.statistics[mangaId].comments.repliesCount || 0}\n` +
+                            `**Follows:** ${resultR.data.statistics[mangaId].follows}\n` +
+                            `**Rating (Bayesian):** ${resultR.data.statistics[mangaId].rating.bayesian.toFixed(2)}\n` +
+                            `**Rating (Average):** ${resultR.data.statistics[mangaId].rating.average.toFixed(2)}\n` +
                             `**Translated languages:** ${manga.attributes.availableTranslatedLanguages.join(", ")}`
                     }],
                     footer: {
@@ -112,7 +114,7 @@ module.exports = {
                     },
                     timestamp: new Date().toISOString(),
                     thumbnail: {
-                        url: `${mangadex.img}/${interaction.options.getString('id')}/${manga.relationships.filter(r => r.type === "cover_art")[0].attributes.fileName}`
+                        url: `${mangadex.img}/${mangaId}/${manga.relationships.filter(r => r.type === "cover_art")[0].attributes.fileName}`
                     }
                 }],
                 ephemeral: false,

@@ -14,7 +14,8 @@ module.exports = {
 			embeds: [{
                 title: "Help Menu",
                 description: `Below you find a list of all commands that are available and a description of what they do.\n` +
-                `Anything thats in [brackets] is a required argument, anything in (parentheses) is an optional argument.\n`,
+                `Anything thats in [brackets] is a required argument, anything in (parentheses) is an optional argument.\n` +
+                `Any mentions of id's or links are specific to MangaDex.\n`,
                 fields: [{
                     name: "Miscellaneous commands",
                     value: `**/help** - Shows this help menu\n` +
@@ -23,9 +24,9 @@ module.exports = {
                         `**/stats** - Shows the bot's statistics\n`,
                 }, {
                     name: "Manga commands",
-                    value: `**/manga [id]** - Displays a manga\n` +
-                        `**/follow [id]** - Follows a manga\n` +
-                        `**/unfollow [id]** - Unfollows a manga\n` +
+                    value: `**/manga [id/link]** - Displays a manga\n` +
+                        `**/follow [id/link]** - Follows a manga\n` +
+                        `**/unfollow [id/link]** - Unfollows a manga\n` +
                         `**/list (page number)** - Shows a list of followed manga\n` +
                         `**/latest (page number)** - Shows the latest followed chapters\n` +
                         `**/browse** - Browse some mangas\n` +

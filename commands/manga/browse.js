@@ -10,13 +10,13 @@ module.exports = {
     async execute(interaction) {
         const noFilter = new ButtonBuilder();
         noFilter.setLabel("Use default filter");
-        noFilter.setCustomId("search");
+        noFilter.setCustomId(`search_${interaction.user.id}`);
         noFilter.setStyle(ButtonStyle.Success);
         noFilter.setEmoji(emoji.infos);
 
         const filter = new ButtonBuilder();
         filter.setLabel("Create custom filter");
-        filter.setCustomId("filter1");
+        filter.setCustomId(`filter-1_${interaction.user.id}`);
         filter.setStyle(ButtonStyle.Primary);
         filter.setEmoji(emoji.question);
 

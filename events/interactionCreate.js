@@ -41,10 +41,15 @@ module.exports = {
 					const filePath = path.join(buttonPath, file);
 					const button = require(filePath);
 		
-					if (button.name === interaction.customId) {
+					if (button.name === interaction.customId.split('_')[0]) {
 						try {
-							await button.execute(interaction);
-							return;
+							if (interaction.customId.split('_')[1] == interaction.user.id) {
+								await button.execute(interaction);
+								return;
+							} else {
+								interaction.reply({ content: `${error} This is not your button!`, ephemeral: true });
+								return;
+							}
 						} catch (e) {
 							interaction.reply({ content: `${error} There was an error while executing this button!\n` +
 								`Please report it in [the support server](${supportServer}).\n\nError:\n${e}`, ephemeral: true });
@@ -54,7 +59,7 @@ module.exports = {
 					}
 				}
 			}
-			interaction.reply({ content: `${error} This button is not registered.`, ephemeral: true });
+			interaction.reply({ content: `${error} This button "${interaction.customId.split('_')[0]}" is not registered.`, ephemeral: true });
 		} else if (interaction.isStringSelectMenu()) {
 			// responds to select menus
 			if (!ignoreSelectMenu.includes(interaction.customId)) {
@@ -64,10 +69,15 @@ module.exports = {
 				for (const file of selectMenuFiles) {
 					const filePath = path.join(selectMenuPath, file);
 					const selectMenu = require(filePath);
-					if (selectMenu.name === interaction.customId) {
+					if (selectMenu.name === interaction.customId.split('_')[0]) {
 						try {
-							await selectMenu.execute(interaction);
-							return;
+							if (interaction.customId.split('_')[1] == interaction.user.id) {
+								await selectMenu.execute(interaction);
+								return;
+							} else {
+								interaction.reply({ content: `${error} This is not your select menu!`, ephemeral: true });
+								return;
+							}
 						} catch (e) {
 							interaction.reply({ content: `${error} There was an error while executing this select menu!\n` +
 								`Please report it in [the support server](${supportServer}).\n\nError:\n${e}`, ephemeral: true });
@@ -77,7 +87,7 @@ module.exports = {
 					}
 				}
 			}
-			interaction.reply({ content: `${error} This select menu is not registered.`, ephemeral: true });
+			interaction.reply({ content: `${error} This select menu "${interaction.customId.split('_')[0]}" is not registered.`, ephemeral: true });
 		} else {
 			interaction.reply({ content: `${error} This interaction is not supported.`, ephemeral: true });
 		}

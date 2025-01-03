@@ -10,7 +10,7 @@ module.exports = {
 
     async execute(interaction) {
         const donate = new ButtonBuilder();
-        donate.setCustomId('support');
+        donate.setCustomId(`support_${interaction.user.id}`);
         donate.setLabel('Donation options');
         donate.setStyle(ButtonStyle.Secondary);
         donate.setEmoji(emoji.doller);
