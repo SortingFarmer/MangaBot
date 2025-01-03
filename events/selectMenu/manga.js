@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require("discord.js");
+const { AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require("discord.js");
 const axios = require('axios');
 const { embed, mangadex } = require("../../config.json");
 const emoji = require("../../emojis.json");
@@ -6,18 +6,25 @@ const { mangaEmbed } = require("../../util");
 
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName("manga")
-        .setDescription("Display a manga.")
-        .addStringOption(option =>
-            option.setName('id')
-            .setDescription('The ID/Link (mangadex only) of the manga you want to display.')
-            .setRequired(true)
-        ),
-
+    name: "manga",
     async execute(interaction) {
-        await interaction.deferReply();
-        let mangaId = interaction.options.getString('id').match(/https:\/\/mangadex\.org\/title\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\//)[1];
+        await interaction.update({
+            files: [new AttachmentBuilder(embed.logo, embed.logoName)],
+            embeds: [{
+                title: "Display Manga",
+                description: `${emoji.loading} Fetching manga...`,
+                color: embed.color,
+                footer: {
+                    text: embed.footNote,
+                    icon_url: `attachment://${embed.logoName}`
+                },
+                timestamp: new Date().toISOString()
+            }],
+            ephemeral: false,
+            components: []
+        });
+
+        let mangaId = interaction.values[0];
         let resultM;
         let resultR;
         
@@ -38,18 +45,28 @@ module.exports = {
                 }
             });
         } catch (error) {
-            await interaction.editReply({ content: `${emoji.error} You entered an invalid id.`, ephemeral: true });
+            await interaction.editReply({ content: `${emoji.error} You entered an invalid id.`, ephemeral: true, embeds: [], });
         }
         
         const manga = resultM.data.data;
 
         if (manga.attributes.contentRating == "pornographic") {
-            await interaction.editReply({ content: `${emoji.error} The manga you are trying to display contains pornographic content.`, ephemeral: true });
+            await interaction.editReply({
+                content: `${emoji.error} The manga you are trying to display contains pornographic content.`,
+                ephemeral: true,
+                embeds: [],
+            });
             
         } else {
+            const back = new ButtonBuilder();
+            back.setLabel('Back to browsing');
+            back.setCustomId(`search_${interaction.user.id}`);
+            back.setStyle(ButtonStyle.Success);
+            back.setEmoji(emoji.left);
+
             const follow = new ButtonBuilder();
             follow.setLabel('Follow manga');
-            follow.setCustomId("follow")
+            follow.setCustomId(`follow_${interaction.user.id}`)
             follow.setStyle(ButtonStyle.Primary);
             follow.setDisabled(true);
 
@@ -64,7 +81,7 @@ module.exports = {
             comments.setURL(`${mangadex.forum}/${resultR.data.statistics[mangaId].comments.threadId}`);
 
             const row = new ActionRowBuilder();
-            resultR.data.statistics[mangaId].comments == null ? row.addComponents(follow, link) : row.addComponents(follow, link, comments);
+            resultR.data.statistics[mangaId].comments == null ? row.addComponents(back, follow, link) : row.addComponents(back, follow, link, comments);
 
             await interaction.editReply({
                 files: [new AttachmentBuilder(embed.logo, embed.logoName)],
