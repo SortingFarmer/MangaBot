@@ -1,7 +1,14 @@
 const axios = require('axios');
 const qs = require('qs');
+const { Sequelize } = require('sequelize');
+const { db } = require('./token.json');
+
+const sequelize = new Sequelize(db.replace('jdbc:', ''), {
+    logging: false
+});
 
 module.exports = {
+    sequelize,
     wait: function(ms) { 
         return new Promise(resolve => setTimeout(resolve, ms)); 
     },
