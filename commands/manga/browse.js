@@ -1,13 +1,43 @@
-const { SlashCommandBuilder, AttachmentBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
+const { SlashCommandBuilder, AttachmentBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder } = require("discord.js");
 const axios = require('axios');
 const { embed, mangadex } = require("../../config.json");
+const { logger } = require('../../util.js');
 const emoji = require("../../emojis.json");
+const { User, SearchTemplate } = require('../../db.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("browse")
         .setDescription("Browse some mangas."),
     async execute(interaction) {
+        await interaction.deferReply();
+
+        User.update({ currentSearch: {
+            page: 0,
+            limit: 25,
+            search: {
+                contentRating: ['safe', 'suggestive', 'erotica'],
+                order: {
+                    rating: 'desc',
+                    followedCount: 'desc'
+                }
+            }
+        }}, { where: { userid: interaction.user.id }}).catch((error) => {
+            logger.error(error)
+        })
+
+        let savedTemplates = SearchTemplate.findAll({ where: { userid: interaction.user.id }});
+        let templates = [];
+        for (const template in savedTemplates) {
+            templates.push({ label: template.name, value: template.templateId})
+        }
+
+        const search = new StringSelectMenuBuilder();
+        search.setPlaceholder('Use a custom search template');
+        search.setCustomId(`searchTemplate_${interaction.user.id}`);
+        search.addOptions(templates);
+        search.setMaxValues(1);
+
         const noFilter = new ButtonBuilder();
         noFilter.setLabel("Use default filter");
         noFilter.setCustomId(`search_${interaction.user.id}`);
@@ -21,9 +51,11 @@ module.exports = {
         filter.setEmoji(emoji.question);
 
         const row = new ActionRowBuilder();
-        row.addComponents(noFilter, filter);
+        row.addComponents(search);
+        const row2 = new ActionRowBuilder();
+        row2.addComponents(noFilter, filter);
 
-        await interaction.reply({
+        await interaction.editReply({
             files: [new AttachmentBuilder(embed.logo, embed.logoName)],
             embeds: [{
                 title: "Browse",
@@ -56,7 +88,7 @@ module.exports = {
                 timestamp: new Date().toISOString()
             }],
             ephemeral: false,
-            components: [row]
+            components: templates.length == 0 ? [row2] : [row, row2]
         });
 
 

@@ -1,5 +1,5 @@
 const { AttachmentBuilder } = require("discord.js");
-const { embed, supportServer, owner } = require("../../config.json");
+const { embed, supportServer, owner, topgg } = require("../../config.json");
 const emoji = require("../../emojis.json");
 
 module.exports = {
@@ -14,8 +14,9 @@ module.exports = {
         `We don't offer any rewards, however you can help us through one of these ways:\n` +
         `${emoji.link} Share this bot with others. ${emoji.link}\n` +
         `${emoji.boost} Boosting the [support server](${supportServer}). ${emoji.boost}\n` +
-        `${emoji.paypal} Donate directly, PayPal [${owner.name}](https://discord.com/users/${owner.id}) money. ${emoji.paypal}\n\n` +
-        `${emoji.shine} More ways to support us coming soon. ${emoji.shine}`,
+        `${emoji.paypal} Donate directly, PayPal [${owner.name}](https://discord.com/users/${owner.id}) money. ${emoji.paypal}\n` +
+        `${emoji.topgg} Upvote on [top.gg](${topgg})`
+        `\n${emoji.shine} More ways to support us coming soon. ${emoji.shine}`,
                 color: embed.color,
                 footer: {
                     text: embed.footNote,

@@ -1,7 +1,8 @@
 const { AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
 const { embed, mangadex } = require("../../config.json");
 const emoji = require("../../emojis.json");
-const { fetchMangaData } = require("../../util");
+const { fetchMangaData, logger } = require("../../util");
+const { User } = require('../../db.js');
 
 module.exports = {
     name: "search",
@@ -20,13 +21,17 @@ module.exports = {
             }],
             ephemeral: false,
             components: []
-        })
-        
+        });
+
+        let user = User.findOne({ where: { userid: interaction.user.id } }).catch((error) => {
+            logger.error(error);
+        });
+
         let tempM, tempR;
         do {
-            ({tempM, tempR} = await fetchMangaData(mangadex.api, 0, 25));
+            ({tempM, tempR} = await fetchMangaData(mangadex.api, user.currentSearch.page, user.currentSearch.limit, user.currentSearch.search));
             if (tempM.data.result == "error") {
-                console.error(`An error occured :c\nTitle: ${tempM.data.errors.title}\nDescription: ${tempM.data.errors.detail}`);
+                logger.warn(`An error occured :c\nTitle: ${tempM.data.errors.title}\nDescription: ${tempM.data.errors.detail}`);
             }
         } while (tempM.data.result != 'ok');
 
@@ -35,8 +40,7 @@ module.exports = {
         let mangaListStrings = [];
         const mangas = tempM.data.data;
         let mangaField = [];
-        for (let i = 0; i < mangas.length; i++) {
-            const manga = mangas[i];
+        for (let manga of mangas) {
             let title = manga.attributes.title?.en || manga.attributes.title[Object.keys(manga.attributes.title)[0]];
             let description = manga.attributes.description.en;
             let id = manga.id;

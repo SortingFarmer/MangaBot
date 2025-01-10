@@ -3,8 +3,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { supportServer } = require('../config.json');
 const { error } = require('../emojis.json');
+const { logger } = require('../util.js');
+const { User } = require('../db.js');
 
-const ignoreButton = ["confirm", "cancel"];
+const ignoreButton = [];
 const ignoreSelectMenu = [];
 
 module.exports = {
@@ -12,23 +14,40 @@ module.exports = {
 	async execute(interaction) {
 		if (interaction.isChatInputCommand()) {
 
+			User.findOrCreate({
+				where: { userid: interaction.user.id },
+				defaults: { userid: interaction.user.id }
+			}).then(([user, created]) => {
+				if (user.banned) {
+					interaction.reply({ content: 
+						`${error} You are banned from using this service!\n` +
+						`You can get unbanned or find out why in the [support server](${supportServer}).`,
+						ephemeral: true
+					});
+					return;
+				}
+			}).catch((error) => {
+				logger.error(error);
+			});
+			
+
 			const command = interaction.client.commands.get(interaction.commandName);
 
 			if (!command) {
-				console.error(`No command matching ${interaction.commandName} was found.`);
+				logger.warn(`No command matching ${interaction.commandName} was found.`);
 				return;
 			}
 
 			try {
 				await command.execute(interaction);
 			} catch (e) {
-				console.error(`There was an error while executing the ${interaction.commandName} command:\n${e.message}\n${e.stack}`);
+				logger.error(e);
 				if (interaction.replied || interaction.deferred) {
 					await interaction.followUp({ content: `${error} There was an error while executing this command!\n`+ 
-					`Please report it in [the support server](${supportServer}).\n\nError:\n${e.message}`, ephemeral: true });
+					`Please report it in the [support server](${supportServer}).\n\nError:\n${e.message}`, ephemeral: true });
 				} else {
 					await interaction.reply({ content: `${error} There was an error while executing this command!\n` +
-					`Please report it in [the support server](${supportServer}).\n\nError:\n${e.message}`, ephemeral: true });
+					`Please report it in the [support server](${supportServer}).\n\nError:\n${e.message}`, ephemeral: true });
 				}
 			}
 		} else if (interaction.isButton()) {
@@ -52,8 +71,8 @@ module.exports = {
 							}
 						} catch (e) {
 							interaction.reply({ content: `${error} There was an error while executing this button!\n` +
-								`Please report it in [the support server](${supportServer}).\n\nError:\n${e}`, ephemeral: true });
-							console.error(`There was an error while running a button:\n${e.message}\n${e.stack}`);
+								`Please report it in the [support server](${supportServer}).\n\nError:\n${e}`, ephemeral: true });
+							logger.error(e);
 							return;
 						}
 					}
@@ -80,8 +99,8 @@ module.exports = {
 							}
 						} catch (e) {
 							interaction.reply({ content: `${error} There was an error while executing this select menu!\n` +
-								`Please report it in [the support server](${supportServer}).\n\nError:\n${e}`, ephemeral: true });
-							console.error(`There was an error while running a select menu:\n${e.message}\n${e.stack}`);
+								`Please report it in the [support server](${supportServer}).\n\nError:\n${e}`, ephemeral: true });
+							logger.error(e);
 							return;
 						}
 					}

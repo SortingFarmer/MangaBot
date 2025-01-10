@@ -7,9 +7,11 @@ module.exports = {
 		.setName('ping')
 		.setDescription('Replies with Pong! (And the ping of the bot)'),
 	async execute(interaction) {
-		const timeTaken = Date.now() - interaction.createdTimestamp;
+		const sent = await interaction.reply({ content: 'Pinging...', fetchReply: true });
+		const timeTaken = sent.createdTimestamp - interaction.createdTimestamp;
 		const ping = timeTaken <= 200 ? emoji.goodping : timeTaken <= 1000 ? emoji.middleping : emoji.badping;
-		await interaction.reply({
+		await interaction.editReply({
+			content: "",
             files: [new AttachmentBuilder(embed.logo, embed.logoName)],
 			embeds: [{
                 title: "Pong!",

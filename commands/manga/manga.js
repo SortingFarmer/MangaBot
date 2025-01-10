@@ -2,7 +2,7 @@ const { SlashCommandBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, Acti
 const axios = require('axios');
 const { embed, mangadex } = require("../../config.json");
 const emoji = require("../../emojis.json");
-const { mangaEmbed } = require("../../util");
+const { mangaEmbed, logger } = require("../../util");
 
 
 module.exports = {
@@ -17,7 +17,12 @@ module.exports = {
 
     async execute(interaction) {
         await interaction.deferReply();
-        let mangaId = interaction.options.getString('id').match(/https:\/\/mangadex\.org\/title\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\//)[1];
+        let mangaId = interaction.options.getString('id');
+        
+        if (mangaId.includes("mangadex")) {
+            mangaId = interaction.options.getString('id').match(/https:\/\/mangadex\.org\/title\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\//)[1];   
+        }
+
         let resultM;
         let resultR;
         

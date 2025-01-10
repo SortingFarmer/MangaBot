@@ -2,7 +2,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { token } = require('./token.json');
-const sequelize = require('./util.js'); // Import the Sequelize instance
+const { logger } = require('./util.js');
+const { sequelize } = require('./db.js');
 
 const client = new Client({
     intents: [
@@ -23,7 +24,7 @@ for (const folder of commandFolders) {
         if ('data' in command && 'execute' in command) {
             client.commands.set(command.data.name, command);
         } else {
-            console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+            logger.warn(`The command at ${filePath} is missing a required "data" or "execute" property.`);
         }
     }
 }
@@ -44,7 +45,7 @@ for (const file of eventFiles) {
 client.login(token);
 
 const handleExit = () => {
-    console.log('Bot is stopping...');
+    logger.info('Bot is stopping...');
     // Perform any cleanup or save operations here
     sequelize.close(); // Close the Sequelize connection
     process.exit();

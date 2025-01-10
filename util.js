@@ -1,19 +1,20 @@
 const axios = require('axios');
 const qs = require('qs');
-const { Sequelize } = require('sequelize');
-const { db } = require('./token.json');
-const { embed, mangadex, logs } = require('./config.json');
+const { embed, mangadex } = require('./config.json');
 
-
-const sequelize = new Sequelize(db.replace('jdbc:', ''), {
-    logging: false
-});
 
 module.exports = {
-    sequelize,
     wait: function(ms) { 
         return new Promise(resolve => setTimeout(resolve, ms)); 
     },
+    /**
+     * Get mangas and ratings
+     * @param {LinkStyle} baseUrl api link
+     * @param {Number} offset Page nr
+     * @param {Number} limit How many mangas to fetch
+     * @param {Object} param Search filters
+     * @returns the mangas and their coresponding ratings
+     */
     fetchMangaData: async function(baseUrl, offset, limit = 100, param = {
         contentRating: ['safe', 'suggestive', 'erotica'],
         order: {
@@ -32,22 +33,19 @@ module.exports = {
                         offset: (offset * limit),
                         ...param
                     },
-                    paramsSerializer: params => {
-                        return qs.stringify(params, { arrayFormat: 'brackets' });
-                    },
                     validateStatus: function (status) {
                         return status === 400 || (status >= 200 && status < 300); // Accept status codes 200-299 and 400
                     }
                 });
                 if (!tempM || tempM.data.result == "error") {
-                    console.error(`An error occurred :c\nTitle: ${tempM?.data?.errors?.[0]?.title}\nDescription: ${tempM?.data?.errors?.[0]?.detail}`);
+                    this.logger.warn(`An error occurred :c\nTitle: ${tempM?.data?.errors?.[0]?.title}\nDescription: ${tempM?.data?.errors?.[0]?.detail}`);
                     break; // Exit the loop if there's an error
                 }
             } while (tempM.data.result != 'ok');
             
     
             this.wait(1000);
-            console.log("Got " + limit + " mangas of page " + (offset + 1));
+            this.logger.info("Got " + limit + " mangas of page " + (offset + 1));
     
             let tempR;
             do {
@@ -62,20 +60,20 @@ module.exports = {
                     }
                 });
                 if (!tempR || tempR.data.result == "error") {
-                    console.error(`An error occurred :c\nTitle: ${tempR?.data?.errors?.[0]?.title}\nDescription: ${tempR?.data?.errors?.[0]?.detail}`);
+                    this.logger.warn(`Title: ${tempR?.data?.errors?.[0]?.title}\nDescription: ${tempR?.data?.errors?.[0]?.detail}`);
                     break; // Exit the loop if there's an error
                 }
             } while (tempR.data.result != 'ok');
     
             this.wait(1000);
-            console.log("Got the statistics for the current page of mangas");
+            this.logger.info("Got the statistics for the current page of mangas");
     
             return { tempM, tempR };
         } catch (error) {
             if (error.response && error.response.status !== 400) {
-                console.error('Error:', error.response.status, error.response.data);
+                this.logger.error(error);
             } else {
-                console.error('Error:', error.message);
+                this.logger.error(error);
             }
         }
     },
@@ -96,12 +94,12 @@ module.exports = {
         }
 
         let result = {
-            title: manga.attributes.title.en,
+            title: manga.attributes.title.en || manga.attributes.title[Object.keys(manga.attributes.title)[0]],
             description: "",
             color: embed.color,
             fields: [{
                 name: "**Description**",
-                value: manga.attributes.description.en.length > 1024 ? manga.attributes.description.en.substring(0, 1021) + "..." : manga.attributes.description.en || "No description available."
+                value: manga.attributes.description.en?.length > 1024 ? manga.attributes.description.en.substring(0, 1021) + "..." : manga.attributes.description.en || "No description available."
             },{
                 name: "**Alternative Titles**",
                 value: altTitle || "No alternative titles available."
@@ -120,13 +118,16 @@ module.exports = {
                     `**Tags:** ${manga.attributes.tags.map(r => r.attributes.name.en).join(", ")}\n` +
                     `**Comments:** ${tempR.data.statistics[mangaId].comments.repliesCount || 0}\n` +
                     `**Follows:** ${tempR.data.statistics[mangaId].follows}\n` +
-                    `**Rating (Bayesian):** ${tempR.data.statistics[mangaId].rating.bayesian.toFixed(2)}\n` +
+                    `**Rating (Bayesian):** ${tempR.data.statistics[mangaId].rating.bayesian.toFixed(3)}\n` +
                     `**Rating (Average):** ${tempR.data.statistics[mangaId].rating.average.toFixed(2)}\n` +
                     `**Translated languages:** ${manga.attributes.availableTranslatedLanguages.join(", ")}`
             }],
             footer: {
                 text: embed.footNote,
                 icon_url: `attachment://${embed.logoName}`
+            },
+            image: {
+                url: `https://og.mangadex.org/og-image/manga/${mangaId}`
             },
             timestamp: new Date().toISOString(),
             thumbnail: {
@@ -135,9 +136,26 @@ module.exports = {
         }
 
         return result;
-    }
+    },
+    logger: {
+        info: function(msg) {
+            console.log(`[${this.date}] [INFO] ${msg}`);
+        },
+        error: function(error) {
+            console.error(`[${this.date}] [ERROR] A error occured, see more below:\n` +
+                `[${this.date}] [ERROR] ${error.message}\n` +
+                `[${this.date}] [ERROR] ${error.stack}`);
+        },
+        warn: function(msg) {
+            console.warn(`[${this.date}] [WARN] ${msg}`);
+        }
+    },
+    date: String(new Date().toLocaleString())
 }
 
 module.exports.wait = module.exports.wait.bind(module.exports);
 module.exports.fetchMangaData = module.exports.fetchMangaData.bind(module.exports);
 module.exports.mangaEmbed = module.exports.mangaEmbed.bind(module.exports);
+module.exports.logger.info = module.exports.logger.info.bind(module.exports);
+module.exports.logger.error = module.exports.logger.error.bind(module.exports);
+module.exports.logger.warn = module.exports.logger.warn.bind(module.exports);
