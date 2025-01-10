@@ -9,10 +9,13 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("manga")
         .setDescription("Display a manga.")
+        .setContexts([0, 1, 2])
+        .setIntegrationTypes([0, 1])
         .addStringOption(option =>
             option.setName('id')
             .setDescription('The ID/Link (mangadex only) of the manga you want to display.')
             .setRequired(true)
+            
         ),
 
     async execute(interaction) {

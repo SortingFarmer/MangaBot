@@ -5,7 +5,9 @@ const emoji = require('../../emojis.json');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('ping')
-		.setDescription('Replies with Pong! (And the ping of the bot)'),
+		.setDescription('Replies with Pong! (And the ping of the bot)')
+        .setContexts([0, 1, 2])
+        .setIntegrationTypes([0, 1]),
 	async execute(interaction) {
 		const sent = await interaction.reply({ content: 'Pinging...', fetchReply: true });
 		const timeTaken = sent.createdTimestamp - interaction.createdTimestamp;

@@ -6,7 +6,9 @@ const { version, license } = require("../../package.json");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('info')
-        .setDescription('Provides information about the bot.'),
+        .setDescription('Provides information about the bot.')
+        .setContexts([0, 1, 2])
+        .setIntegrationTypes([0, 1]),
 
     async execute(interaction) {
         const donate = new ButtonBuilder();

@@ -6,7 +6,9 @@ const emoji = require("../../emojis.json");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("help")
-        .setDescription("Shows a list of all commands with their description."),
+        .setDescription("Shows a list of all commands with their description.")
+        .setContexts([0, 1, 2])
+        .setIntegrationTypes([0, 1]),
 
     async execute(interaction) {
         await interaction.reply({

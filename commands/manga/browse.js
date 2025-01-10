@@ -8,7 +8,9 @@ const { User, SearchTemplate } = require('../../db.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("browse")
-        .setDescription("Browse some mangas."),
+        .setDescription("Browse some mangas.")
+        .setContexts([0, 1, 2])
+        .setIntegrationTypes([0, 1]),
     async execute(interaction) {
         await interaction.deferReply();
 
