@@ -1,11 +1,11 @@
 const { AttachmentBuilder } = require("discord.js");
-const { embed, supportServer, owner, topgg } = require("../../config.json");
+const { embed, supportServer, owner, supportLinks } = require("../../config.json");
 const emoji = require("../../emojis.json");
 
 module.exports = {
     name: "support",
     async execute(interaction) {
-        await interaction.reply({
+        await interaction.update({
             files: [new AttachmentBuilder(embed.logo, embed.logoName)],
             embeds: [{
                 title: "Support options",
@@ -15,7 +15,7 @@ module.exports = {
         `${emoji.link} Share this bot with others. ${emoji.link}\n` +
         `${emoji.boost} Boosting the [support server](${supportServer}). ${emoji.boost}\n` +
         `${emoji.paypal} Donate directly, PayPal [${owner.name}](https://discord.com/users/${owner.id}) money. ${emoji.paypal}\n` +
-        `${emoji.topgg} Upvote on [top.gg](${topgg})`
+        `${emoji.topgg} Upvote on [top.gg](${supportLinks.topgg}) ${emoji.topgg}\n` +
         `\n${emoji.shine} More ways to support us coming soon. ${emoji.shine}`,
                 color: embed.color,
                 footer: {
@@ -24,7 +24,8 @@ module.exports = {
                 },
                 timestamp: new Date().toISOString()
             }],
-            ephemeral: true
+            ephemeral: true,
+            components: []
         })
     }
 }
