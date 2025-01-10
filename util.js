@@ -1,7 +1,7 @@
 const axios = require('axios');
 const qs = require('qs');
 const { embed, mangadex } = require('./config.json');
-
+const ISO6391 = require('iso-639-1');
 
 module.exports = {
     wait: function(ms) { 
@@ -81,7 +81,17 @@ module.exports = {
         const manga = tempM.data.data;
         const mangaId = manga.id;
         let altTitle = "";
-        manga.attributes.altTitles.forEach(altTitles => Object.entries(altTitles).forEach(([key, value]) => altTitle += `**${key}:** ${value}\n` ));
+        let tLanguages = "";
+        manga.attributes.altTitles.forEach(altTitles => Object.entries(altTitles).forEach(([key, value]) => altTitle += `**${ISO6391.getName(key.split('-')[0])}:** ${value}\n` ));
+        
+        for (let i = 0; i < manga.attributes.availableTranslatedLanguages.length; i++) {
+            const lang = manga.attributes.availableTranslatedLanguages[i];
+            tLanguages += ISO6391.getName(lang.split('-')[0]);
+            if (i < (manga.attributes.availableTranslatedLanguages.length - 1)) {
+                tLanguages += ", "
+            }
+        }
+
         let lastVolume = "";
         let lastChapter = "";
         if (manga.attributes.status == "completed" || manga.attributes.status == "cancelled") {
@@ -108,7 +118,7 @@ module.exports = {
                 value: `` +
                     `**Demographic:** ${manga.attributes.publicationDemographic || "Type not available."}\n` +
                     `**Content Rating:** ${manga.attributes.contentRating}\n` +
-                    `**Original language:** ${manga.attributes.originalLanguage}\n` +
+                    `**Original language:** ${ISO6391.getName(manga.attributes.originalLanguage)}\n` +
                     `**Authors:** ${manga.relationships.filter(r => r.type === "author").map(r => r.attributes?.name).join(", ")}\n` +
                     `**Artists:** ${manga.relationships.filter(r => r.type === "artist").map(r => r.attributes?.name).join(", ")}\n` +
                     `**Status:** ${manga.attributes.status}\n` +
@@ -120,7 +130,7 @@ module.exports = {
                     `**Follows:** ${tempR.data.statistics[mangaId].follows}\n` +
                     `**Rating (Bayesian):** ${tempR.data.statistics[mangaId].rating.bayesian.toFixed(3)}\n` +
                     `**Rating (Average):** ${tempR.data.statistics[mangaId].rating.average.toFixed(2)}\n` +
-                    `**Translated languages:** ${manga.attributes.availableTranslatedLanguages.join(", ")}`
+                    `**Translated languages:** ${tLanguages}`
             }],
             footer: {
                 text: embed.footNote,

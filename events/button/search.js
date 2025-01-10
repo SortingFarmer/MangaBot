@@ -76,12 +76,6 @@ module.exports = {
         );
 
         pages.addComponents(
-            /*new ButtonBuilder()
-            .setLabel("Previous")
-            .setCustomId(`previous_${interaction.user.id}`)
-            .setStyle(ButtonStyle.Success)
-            .setEmoji(emoji.left)
-            .setDisabled(true),*/
             new ButtonBuilder()
             .setLabel("1")
             .setCustomId(`page_${interaction.user.id}_1`)
@@ -90,11 +84,13 @@ module.exports = {
             new ButtonBuilder()
             .setLabel("2")
             .setCustomId(`page_${interaction.user.id}_2`)
-            .setStyle(ButtonStyle.Secondary),
+            .setStyle(ButtonStyle.Secondary)
+            .setDisabled(false),
             new ButtonBuilder()
             .setLabel("3")
             .setCustomId(`page_${interaction.user.id}_3`)
-            .setStyle(ButtonStyle.Secondary),
+            .setStyle(ButtonStyle.Secondary)
+            .setDisabled(false),
             new ButtonBuilder()
             .setLabel("Previous")
             .setCustomId(`previous_${interaction.user.id}`)
@@ -105,15 +101,7 @@ module.exports = {
             .setLabel("Next")
             .setCustomId(`next_${interaction.user.id}`)
             .setStyle(ButtonStyle.Success)
-            .setEmoji(emoji.right)/*
-            new ButtonBuilder()
-            .setLabel("4")
-            .setCustomId(`page_${interaction.user.id}_4`)
-            .setStyle(ButtonStyle.Secondary),
-            new ButtonBuilder()
-            .setLabel("5")
-            .setCustomId(`page_${interaction.user.id}_5`)
-            .setStyle(ButtonStyle.Secondary),*/
+            .setEmoji(emoji.right)
         );
 
         await interaction.editReply({
