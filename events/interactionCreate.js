@@ -18,18 +18,23 @@ module.exports = {
 				where: { userid: interaction.user.id },
 				defaults: { userid: interaction.user.id }
 			}).then(([user, created]) => {
+				if (created) {
+					logger.info(`New user (${interaction.user.id}) created!`);
+				} else {
+					logger.info("User already exists")
+				}
 				if (user.banned) {
 					interaction.reply({ content: 
 						`${error} You are banned from using this service!\n` +
 						`You can get unbanned or find out why in the [support server](${supportServer}).`,
 						ephemeral: true
 					});
+					logger.info("User is banned!");
 					return;
 				}
 			}).catch((error) => {
 				logger.error(error);
 			});
-			
 
 			const command = interaction.client.commands.get(interaction.commandName);
 

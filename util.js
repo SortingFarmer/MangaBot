@@ -149,18 +149,17 @@ module.exports = {
     },
     logger: {
         info: function(msg) {
-            console.log(`[${this.date}] [INFO] ${msg}`);
+            console.log(`[${String(new Date().toLocaleString() + ":" + new Date().getMilliseconds())}] [INFO] ${msg}`);
         },
         error: function(error) {
-            console.error(`[${this.date}] [ERROR] A error occured, see more below:\n` +
-                `[${this.date}] [ERROR] ${error.message}\n` +
-                `[${this.date}] [ERROR] ${error.stack}`);
+            console.error(`[${String(new Date().toLocaleString() + ":" + new Date().getMilliseconds())}] [ERROR] A error occured, see more below:\n` +
+                `[${String(new Date().toLocaleString() + ":" + new Date().getMilliseconds())}] [ERROR] ${error.message}\n` +
+                `[${String(new Date().toLocaleString() + ":" + new Date().getMilliseconds())}] [ERROR] ${error.stack}`);
         },
         warn: function(msg) {
-            console.warn(`[${this.date}] [WARN] ${msg}`);
+            console.warn(`[${String(new Date().toLocaleString() + ":" + new Date().getMilliseconds())}] [WARN] ${msg}`);
         }
-    },
-    date: String(new Date().toLocaleString())
+    }
 }
 
 module.exports.wait = module.exports.wait.bind(module.exports);

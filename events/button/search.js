@@ -11,7 +11,7 @@ module.exports = {
             files: [new AttachmentBuilder(embed.logo, embed.logoName)],
             embeds: [{
                 title: "Browse Manga",
-                description: `${emoji.loading} Fetching mangas...`,
+                description: `${emoji.loading} Fetching mangas...\n\n\n*Searching takes too long? Press the button below to try again!*\n*Please do not spam, if errors ocurr no help will be given as its a development tool!*`,
                 color: embed.color,
                 footer: {
                     text: embed.footNote,
@@ -20,16 +20,26 @@ module.exports = {
                 timestamp: new Date().toISOString()
             }],
             ephemeral: false,
-            components: []
+            components: [new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId(`search_${interaction.user.id}`).setLabel('Try again').setStyle(ButtonStyle.Secondary))]
         });
 
-        let user = User.findOne({ where: { userid: interaction.user.id } }).catch((error) => {
+        let user = await User.findOne({ where: { userid: interaction.user.id } }).catch((error) => {
             logger.error(error);
         });
 
+        if (!user) {
+            logger.warn("User not found!")
+            return await interaction.editReply({
+                content: "User not found in the database.",
+                ephemeral: true
+            });
+        }
+        let jsonObject = JSON.parse(user.dataValues.currentSearch);
+        logger.warn(jsonObject)
+        
         let tempM, tempR;
         do {
-            ({tempM, tempR} = await fetchMangaData(mangadex.api, user.currentSearch.page, user.currentSearch.limit, user.currentSearch.search));
+            ({tempM, tempR} = await fetchMangaData(mangadex.api, jsonObject.page, jsonObject.limit, search));
             if (tempM.data.result == "error") {
                 logger.warn(`An error occured :c\nTitle: ${tempM.data.errors.title}\nDescription: ${tempM.data.errors.detail}`);
             }
