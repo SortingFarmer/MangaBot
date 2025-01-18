@@ -87,6 +87,13 @@ const Setting = sequelize.define('Setting', {
             model: User,
             key: 'userId'
         },
+        allowNull: false,
+        unique: true,
+        primaryKey: true
+    },
+    notification: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
         allowNull: false
     }
 });

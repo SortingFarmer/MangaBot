@@ -1,8 +1,8 @@
 const { AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require("discord.js");
 const axios = require('axios');
-const { embed, mangadex } = require("../../config.json");
-const emoji = require("../../emojis.json");
-const { mangaEmbed } = require("../../util");
+const { embed, mangadex } = require("../../../config.json");
+const emoji = require("../../../emojis.json");
+const { mangaEmbed } = require("../../../util");
 
 
 module.exports = {

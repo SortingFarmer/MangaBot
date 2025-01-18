@@ -58,12 +58,23 @@ module.exports = {
 			// responds to buttons
 			if (!ignoreButton.includes(interaction.customId)) {
 				const buttonPath = path.join(__dirname, 'button');
-				const buttonFiles = fs.readdirSync(buttonPath).filter(file => file.endsWith('.js'));
-		
+				const getAllFiles = (dirPath, arrayOfFiles) => {
+					files = fs.readdirSync(dirPath);
+					arrayOfFiles = arrayOfFiles || [];
+					files.forEach(file => {
+						if (fs.statSync(path.join(dirPath, file)).isDirectory()) {
+							arrayOfFiles = getAllFiles(path.join(dirPath, file), arrayOfFiles);
+						} else {
+							arrayOfFiles.push(path.join(dirPath, file));
+						}
+					});
+					return arrayOfFiles;
+				};
+				const buttonFiles = getAllFiles(buttonPath).filter(file => file.endsWith('.js'));
+
 				for (const file of buttonFiles) {
-					const filePath = path.join(buttonPath, file);
-					const button = require(filePath);
-		
+					const button = require(file);
+
 					if (button.name === interaction.customId.split('_')[0]) {
 						try {
 							if (interaction.customId.split('_')[1] == interaction.user.id) {
@@ -87,11 +98,23 @@ module.exports = {
 			// responds to select menus
 			if (!ignoreSelectMenu.includes(interaction.customId)) {	
 				const selectMenuPath = path.join(__dirname, 'selectMenu');
-				const selectMenuFiles = fs.readdirSync(selectMenuPath).filter(file => file.endsWith('.js'));
+				const getAllFiles = (dirPath, arrayOfFiles) => {
+					files = fs.readdirSync(dirPath);
+					arrayOfFiles = arrayOfFiles || [];
+					files.forEach(file => {
+						if (fs.statSync(path.join(dirPath, file)).isDirectory()) {
+							arrayOfFiles = getAllFiles(path.join(dirPath, file), arrayOfFiles);
+						} else {
+							arrayOfFiles.push(path.join(dirPath, file));
+						}
+					});
+					return arrayOfFiles;
+				};
+				const selectMenuFiles = getAllFiles(selectMenuPath).filter(file => file.endsWith('.js'));
 
 				for (const file of selectMenuFiles) {
-					const filePath = path.join(selectMenuPath, file);
-					const selectMenu = require(filePath);
+					const selectMenu = require(file);
+
 					if (selectMenu.name === interaction.customId.split('_')[0]) {
 						try {
 							if (interaction.customId.split('_')[1] == interaction.user.id) {

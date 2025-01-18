@@ -21,21 +21,18 @@ module.exports = {
     }, sort = {
         "rating": "desc"
     }) {
-        this.logger.test(typeof sort)
-        this.logger.test(JSON.stringify(sort, null, 2))
         try {
             let tempM;
-
-            // Add a request interceptor
-            axios.interceptors.request.use(function (config) {
-                // Log the request details
-                console.log('Request:', config);
-                return config;
-            }, function (error) {
-                // Handle the error
-                return Promise.reject(error);
-            });
-
+    
+            // Ensure sort is an object
+            sort = typeof sort === 'object' && sort !== null ? sort : {};
+    
+            // Convert sort object to the required format
+            const order = {};
+            for (const [key, value] of Object.entries(sort)) {
+                order[`order[${key}]`] = value;
+            }
+    
             // Your API request
             tempM = await axios({
                 method: 'GET',
@@ -44,24 +41,22 @@ module.exports = {
                     includes: ['cover_art', 'author', 'artist', 'tag'],
                     limit: limit,
                     offset: (page * limit),
-                    order: typeof sort === 'object' ? { ...sort } : {},
+                    ...order, // Use the formatted order object
                     ...param
                 },
                 validateStatus: function (status) {
                     return (status >= 400 && status < 405) || (status >= 200 && status < 300);
                 }
-            }); 
-            
-            this.logger.test(JSON.stringify(tempM.config.params, null, 2))
-
-            if (tempM.data.result != "ok") {
+            });
+    
+            if (tempM.data.result !== "ok") {
                 for (const error of tempM.data.errors) {
                     throw new Error(`Title: ${error.title} Description: ${error.detail}`);
                 }
             }
-
+    
             return tempM;
-
+    
         } catch (error) {
             this.logger.error(error);
         }

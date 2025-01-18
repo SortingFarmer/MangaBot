@@ -1,6 +1,6 @@
 const { AttachmentBuilder } = require("discord.js");
-const { embed, supportServer, owner, supportLinks } = require("../../config.json");
-const emoji = require("../../emojis.json");
+const { embed, supportServer, owner, supportLinks } = require("../../../config.json");
+const emoji = require("../../../emojis.json");
 
 module.exports = {
     name: "support",

@@ -1,8 +1,8 @@
 const { AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require("discord.js");
-const { embed, mangadex } = require("../../config.json");
-const emoji = require("../../emojis.json");
-const { fetchMangaData, logger } = require("../../util");
-const { User } = require('../../db.js');
+const { embed, mangadex } = require("../../../config.json");
+const emoji = require("../../../emojis.json");
+const { fetchMangaData, logger } = require("../../../util.js");
+const { User } = require('../../../db.js');
 
 module.exports = {
     name: "search",
@@ -32,10 +32,6 @@ module.exports = {
         }
 
         let userJson = user.toJSON();
-        logger.test(Number(userJson.page))
-        logger.test(Number(userJson.limit))
-        logger.test(JSON.stringify(userJson.currentSearch, null, 2))
-        logger.test(JSON.stringify(userJson.order, null, 2))
         
         let tempM = await fetchMangaData(mangadex.api, Number(userJson.page), Number(userJson.limit), userJson.currentSearch, userJson.order);
 
@@ -98,13 +94,13 @@ module.exports = {
             .setDisabled(false),
             new ButtonBuilder()
             .setLabel("Previous")
-            .setCustomId(`previous_${interaction.user.id}`)
+            .setCustomId(`previousPage_${interaction.user.id}`)
             .setStyle(ButtonStyle.Success)
             .setEmoji(emoji.left)
             .setDisabled(true),
             new ButtonBuilder()
             .setLabel("Next")
-            .setCustomId(`next_${interaction.user.id}`)
+            .setCustomId(`nextPage_${interaction.user.id}`)
             .setStyle(ButtonStyle.Success)
             .setEmoji(emoji.right)
         );
