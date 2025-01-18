@@ -13,17 +13,28 @@ module.exports = {
      * @param {Number} page Page nr
      * @param {Number} limit How many mangas to fetch
      * @param {Object} param Search filters
+     * @param {Object} sort How to sort the results
      * @returns the mangas and their coresponding ratings
      */
     fetchMangaData: async function(baseUrl, page, limit = 100, param = {
-        contentRating: ['safe', 'suggestive', 'erotica'],
-        order: {
-            rating: 'desc',
-            followedCount: 'desc'
-        }
+        contentRating: ['safe', 'suggestive', 'erotica']
+    }, sort = {
+        "rating": "desc"
     }) {
+        this.logger.test(typeof sort)
+        this.logger.test(JSON.stringify(sort, null, 2))
         try {
             let tempM;
+
+            // Add a request interceptor
+            axios.interceptors.request.use(function (config) {
+                // Log the request details
+                console.log('Request:', config);
+                return config;
+            }, function (error) {
+                // Handle the error
+                return Promise.reject(error);
+            });
 
             // Your API request
             tempM = await axios({
@@ -33,12 +44,15 @@ module.exports = {
                     includes: ['cover_art', 'author', 'artist', 'tag'],
                     limit: limit,
                     offset: (page * limit),
+                    order: typeof sort === 'object' ? { ...sort } : {},
                     ...param
                 },
                 validateStatus: function (status) {
                     return (status >= 400 && status < 405) || (status >= 200 && status < 300);
                 }
-            });
+            }); 
+            
+            this.logger.test(JSON.stringify(tempM.config.params, null, 2))
 
             if (tempM.data.result != "ok") {
                 for (const error of tempM.data.errors) {
@@ -52,9 +66,25 @@ module.exports = {
             this.logger.error(error);
         }
     },
+    /**
+     * Get stats for mangas
+     * @param {LinkStyle} baseUrl Mangadex api link
+     * @param {Array<string>} mangas An array of ids for the mangas you want the statistics
+     * @returns A statistics object
+     */
     fetchStatisticsData: async function (baseUrl, mangas) {
         try {
             let tempR;
+
+            // Add a request interceptor
+            axios.interceptors.request.use(function (config) {
+                // Log the request details
+                console.log('Request:', config);
+                return config;
+            }, function (error) {
+                // Handle the error
+                return Promise.reject(error);
+            });
 
             // Your API request
             tempR = await axios({

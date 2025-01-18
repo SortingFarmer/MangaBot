@@ -34,9 +34,10 @@ module.exports = {
         let userJson = user.toJSON();
         logger.test(Number(userJson.page))
         logger.test(Number(userJson.limit))
-        logger.test(JSON.toString(userJson.currentSearch).toString())
+        logger.test(JSON.stringify(userJson.currentSearch, null, 2))
+        logger.test(JSON.stringify(userJson.order, null, 2))
         
-        let tempM = await fetchMangaData(mangadex.api, Number(userJson.page), Number(userJson.limit), userJson.currentSearch.search);
+        let tempM = await fetchMangaData(mangadex.api, Number(userJson.page), Number(userJson.limit), userJson.currentSearch, userJson.order);
 
         const mangaList = new ActionRowBuilder();
         const pages = new ActionRowBuilder();

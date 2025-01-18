@@ -14,12 +14,11 @@ module.exports = {
     async execute(interaction) {
         await interaction.deferReply();
 
-        User.update({page: 0, limit: 20, currentSearch: {
+        User.update({page: 0, limit: 25, currentSearch: {
             contentRating: ['safe', 'suggestive', 'erotica'],
-            order: {
-                rating: 'desc',
-                followedCount: 'desc'
-            }
+        }, order: {
+            "rating": "desc",
+            "followedCount": "desc"
         }}, { where: { userId: interaction.user.id }}).catch((error) => {
             logger.error(error)
         })

@@ -24,8 +24,8 @@ const User = sequelize.define('User', {
         defaultValue: {
             contentRating: ['safe', 'suggestive', 'erotica'],
             order: {
-                rating: 'desc',
-                followedCount: 'desc'
+                "rating": "desc",
+                "followedCount": "desc"
             }
         },
         allowNull: false
@@ -36,8 +36,16 @@ const User = sequelize.define('User', {
         allowNull: false
     },
     limit: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.TINYINT,
         defaultValue: 25,
+        allowNull: false
+    },
+    order: {
+        type: DataTypes.JSON,
+        defaultValue: {
+            rating: 'desc',
+            followedCount: 'desc'
+        },
         allowNull: false
     },
     banned: {
