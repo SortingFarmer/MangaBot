@@ -12,29 +12,28 @@ const ignoreSelectMenu = [];
 module.exports = {
 	name: Events.InteractionCreate,
 	async execute(interaction) {
-		if (interaction.isChatInputCommand()) {
 
-			User.findOrCreate({
-				where: { userid: interaction.user.id },
-				defaults: { userid: interaction.user.id }
-			}).then(([user, created]) => {
-				if (created) {
-					logger.info(`New user (${interaction.user.id}) created!`);
-				} else {
-					logger.info("User already exists")
-				}
-				if (user.banned) {
-					interaction.reply({ content: 
-						`${error} You are banned from using this service!\n` +
-						`You can get unbanned or find out why in the [support server](${supportServer}).`,
-						ephemeral: true
-					});
-					logger.info("User is banned!");
-					return;
-				}
-			}).catch((error) => {
-				logger.error(error);
-			});
+		await User.findOrCreate({
+			where: { userId: interaction.user.id },
+			defaults: { userId: interaction.user.id }
+		}).then(([user, created]) => {
+			if (created) {
+				logger.info(`New user (${interaction.user.id}) created!`);
+			}
+			if (user.banned) {
+				interaction.reply({ content: 
+					`${error} You are banned from using this service!\n` +
+					`You can get unbanned or find out why in the [support server](${supportServer}).`,
+					ephemeral: true
+				});
+				logger.info("User is banned!");
+				return;
+			}
+		}).catch((error) => {
+			logger.error(error);
+		});
+
+		if (interaction.isChatInputCommand()) {
 
 			const command = interaction.client.commands.get(interaction.commandName);
 
@@ -86,7 +85,7 @@ module.exports = {
 			interaction.reply({ content: `${error} This button "${interaction.customId.split('_')[0]}" is not registered.`, ephemeral: true });
 		} else if (interaction.isStringSelectMenu()) {
 			// responds to select menus
-			if (!ignoreSelectMenu.includes(interaction.customId)) {
+			if (!ignoreSelectMenu.includes(interaction.customId)) {	
 				const selectMenuPath = path.join(__dirname, 'selectMenu');
 				const selectMenuFiles = fs.readdirSync(selectMenuPath).filter(file => file.endsWith('.js'));
 

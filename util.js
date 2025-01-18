@@ -10,71 +10,74 @@ module.exports = {
     /**
      * Get mangas and ratings
      * @param {LinkStyle} baseUrl api link
-     * @param {Number} offset Page nr
+     * @param {Number} page Page nr
      * @param {Number} limit How many mangas to fetch
      * @param {Object} param Search filters
      * @returns the mangas and their coresponding ratings
      */
-    fetchMangaData: async function(baseUrl, offset, limit = 100, param = {
+    fetchMangaData: async function(baseUrl, page, limit = 100, param = {
         contentRating: ['safe', 'suggestive', 'erotica'],
         order: {
             rating: 'desc',
             followedCount: 'desc'
-        }}) {
+        }
+    }) {
         try {
             let tempM;
-            do {
-                tempM = await axios({
-                    method: 'GET',
-                    url: `${baseUrl}/manga`,
-                    params: {
-                        includes: ['cover_art', 'author', 'artist', 'tag'],
-                        limit: limit,
-                        offset: (offset * limit),
-                        ...param
-                    },
-                    validateStatus: function (status) {
-                        return status === 400 || (status >= 200 && status < 300); // Accept status codes 200-299 and 400
-                    }
-                });
-                if (!tempM || tempM.data.result == "error") {
-                    this.logger.warn(`An error occurred :c\nTitle: ${tempM?.data?.errors?.[0]?.title}\nDescription: ${tempM?.data?.errors?.[0]?.detail}`);
-                    break; // Exit the loop if there's an error
+
+            // Your API request
+            tempM = await axios({
+                method: 'GET',
+                url: `${baseUrl}/manga`,
+                params: {
+                    includes: ['cover_art', 'author', 'artist', 'tag'],
+                    limit: limit,
+                    offset: (page * limit),
+                    ...param
+                },
+                validateStatus: function (status) {
+                    return (status >= 400 && status < 405) || (status >= 200 && status < 300);
                 }
-            } while (tempM.data.result != 'ok');
-            
-    
-            this.wait(1000);
-            this.logger.info("Got " + limit + " mangas of page " + (offset + 1));
-    
-            let tempR;
-            do {
-                tempR = await axios({
-                    method: 'GET',
-                    url: `${baseUrl}/statistics/manga`,
-                    params: {
-                        manga: tempM.data.data.map(manga => manga.id)
-                    },
-                    validateStatus: function (status) {
-                        return status === 400 || (status >= 200 && status < 300); // Accept status codes 200-299 and 400
-                    }
-                });
-                if (!tempR || tempR.data.result == "error") {
-                    this.logger.warn(`Title: ${tempR?.data?.errors?.[0]?.title}\nDescription: ${tempR?.data?.errors?.[0]?.detail}`);
-                    break; // Exit the loop if there's an error
+            });
+
+            if (tempM.data.result != "ok") {
+                for (const error of tempM.data.errors) {
+                    throw new Error(`Title: ${error.title} Description: ${error.detail}`);
                 }
-            } while (tempR.data.result != 'ok');
-    
-            this.wait(1000);
-            this.logger.info("Got the statistics for the current page of mangas");
-    
-            return { tempM, tempR };
-        } catch (error) {
-            if (error.response && error.response.status !== 400) {
-                this.logger.error(error);
-            } else {
-                this.logger.error(error);
             }
+
+            return tempM;
+
+        } catch (error) {
+            this.logger.error(error);
+        }
+    },
+    fetchStatisticsData: async function (baseUrl, mangas) {
+        try {
+            let tempR;
+
+            // Your API request
+            tempR = await axios({
+                method: 'GET',
+                url: `${baseUrl}/statistics/manga`,
+                params: {
+                    manga: mangas
+                },
+                validateStatus: function (status) {
+                    return (status >= 400 && status < 405) || (status >= 200 && status < 300);
+                }
+            });
+
+            if (tempR.data.result != "ok") {
+                for (const error of tempR.data.errors) {
+                    throw new Error(`Title: ${error.title} Description: ${error.detail}`);
+                }
+            }
+
+            return tempR;
+
+        } catch (error) {
+            this.logger.error(error);
         }
     },
     mangaEmbed: function(tempM, tempR) {
@@ -82,7 +85,11 @@ module.exports = {
         const mangaId = manga.id;
         let altTitle = "";
         let tLanguages = "";
-        manga.attributes.altTitles.forEach(altTitles => Object.entries(altTitles).forEach(([key, value]) => altTitle += `**${ISO6391.getName(key.split('-')[0])}:** ${value}\n` ));
+        manga.attributes.altTitles.forEach(altTitles => {
+                Object.entries(altTitles).forEach(([key, value]) => {
+                    altTitle += `**${ISO6391.getName(key.split('-')[0])}:** ${value}\n`
+                })
+            });
         
         for (let i = 0; i < manga.attributes.availableTranslatedLanguages.length; i++) {
             const lang = manga.attributes.availableTranslatedLanguages[i];
@@ -158,6 +165,12 @@ module.exports = {
         },
         warn: function(msg) {
             console.warn(`[${String(new Date().toLocaleString() + ":" + new Date().getMilliseconds())}] [WARN] ${msg}`);
+        },
+        test: function(msg) {
+            console.log(`[${String(new Date().toLocaleString() + ":" + new Date().getMilliseconds())}] [TEST] ${msg}`);
+        },
+        log: function(msg, type) {
+            console.warn(`[${String(new Date().toLocaleString() + ":" + new Date().getMilliseconds())}] [${type}] ${msg}`);
         }
     }
 }
@@ -168,3 +181,5 @@ module.exports.mangaEmbed = module.exports.mangaEmbed.bind(module.exports);
 module.exports.logger.info = module.exports.logger.info.bind(module.exports);
 module.exports.logger.error = module.exports.logger.error.bind(module.exports);
 module.exports.logger.warn = module.exports.logger.warn.bind(module.exports);
+module.exports.logger.test = module.exports.logger.test.bind(module.exports);
+module.exports.logger.log = module.exports.logger.log.bind(module.exports);

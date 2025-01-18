@@ -1,4 +1,4 @@
-const { AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
+const { AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require("discord.js");
 const { embed, mangadex } = require("../../config.json");
 const emoji = require("../../emojis.json");
 const { fetchMangaData, logger } = require("../../util");
@@ -11,7 +11,7 @@ module.exports = {
             files: [new AttachmentBuilder(embed.logo, embed.logoName)],
             embeds: [{
                 title: "Browse Manga",
-                description: `${emoji.loading} Fetching mangas...\n\n\n*Searching takes too long? Press the button below to try again!*\n*Please do not spam, if errors ocurr no help will be given as its a development tool!*`,
+                description: `${emoji.loading} Fetching mangas...`,
                 color: embed.color,
                 footer: {
                     text: embed.footNote,
@@ -20,30 +20,23 @@ module.exports = {
                 timestamp: new Date().toISOString()
             }],
             ephemeral: false,
-            components: [new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId(`search_${interaction.user.id}`).setLabel('Try again').setStyle(ButtonStyle.Secondary))]
+            components: []
         });
 
-        let user = await User.findOne({ where: { userid: interaction.user.id } }).catch((error) => {
+        let user = await User.findOne({ where: { userId: interaction.user.id } }).catch((error) => {
             logger.error(error);
         });
 
         if (!user) {
-            logger.warn("User not found!")
-            return await interaction.editReply({
-                content: "User not found in the database.",
-                ephemeral: true
-            });
+            return logger.warn("User not found!");
         }
-        let jsonObject = JSON.parse(user.dataValues.currentSearch);
-        logger.warn(jsonObject)
+
+        let userJson = user.toJSON();
+        logger.test(Number(userJson.page))
+        logger.test(Number(userJson.limit))
+        logger.test(JSON.toString(userJson.currentSearch).toString())
         
-        let tempM, tempR;
-        do {
-            ({tempM, tempR} = await fetchMangaData(mangadex.api, jsonObject.page, jsonObject.limit, search));
-            if (tempM.data.result == "error") {
-                logger.warn(`An error occured :c\nTitle: ${tempM.data.errors.title}\nDescription: ${tempM.data.errors.detail}`);
-            }
-        } while (tempM.data.result != 'ok');
+        let tempM = await fetchMangaData(mangadex.api, Number(userJson.page), Number(userJson.limit), userJson.currentSearch.search);
 
         const mangaList = new ActionRowBuilder();
         const pages = new ActionRowBuilder();
@@ -52,7 +45,7 @@ module.exports = {
         let mangaField = [];
         for (let manga of mangas) {
             let title = manga.attributes.title?.en || manga.attributes.title[Object.keys(manga.attributes.title)[0]];
-            let description = manga.attributes.description.en;
+            let description = manga.attributes.description.en || "No description available.";
             let id = manga.id;
             let result = `*Description:*\n${description}`;
             
@@ -65,9 +58,10 @@ module.exports = {
             let shortTitle = title;
             let longTitle = title;
             if (title.length > 25) {
-                shortTitle = title.substring(0, 25 - 3) + '...';
-            } else if (title.length > 100) {
-                longTitle = title.substring(0, 100 - 3) + '...';
+                shortTitle = title.substring(0, (25 - 3)) + '...';
+            }
+            if (title.length > 100) {
+                longTitle = title.substring(0, (100 - 3)) + '...';
             }
             
             mangaField.push({

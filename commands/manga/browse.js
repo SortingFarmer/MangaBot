@@ -14,21 +14,17 @@ module.exports = {
     async execute(interaction) {
         await interaction.deferReply();
 
-        User.update({ currentSearch: {
-            page: 0,
-            limit: 25,
-            search: {
-                contentRating: ['safe', 'suggestive', 'erotica'],
-                order: {
-                    rating: 'desc',
-                    followedCount: 'desc'
-                }
+        User.update({page: 0, limit: 20, currentSearch: {
+            contentRating: ['safe', 'suggestive', 'erotica'],
+            order: {
+                rating: 'desc',
+                followedCount: 'desc'
             }
-        }}, { where: { userid: interaction.user.id }}).catch((error) => {
+        }}, { where: { userId: interaction.user.id }}).catch((error) => {
             logger.error(error)
         })
 
-        let savedTemplates = SearchTemplate.findAll({ where: { userid: interaction.user.id }});
+        let savedTemplates = SearchTemplate.findAll({ where: { userId: interaction.user.id }});
         let templates = [];
         for (const template in savedTemplates) {
             templates.push({ label: template.name, value: template.templateId})

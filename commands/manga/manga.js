@@ -2,7 +2,7 @@ const { SlashCommandBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, Acti
 const axios = require('axios');
 const { embed, mangadex } = require("../../config.json");
 const emoji = require("../../emojis.json");
-const { mangaEmbed, logger } = require("../../util");
+const { mangaEmbed } = require("../../util");
 
 
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
         .setContexts([0, 1, 2])
         .setIntegrationTypes([0, 1])
         .addStringOption(option =>
-            option.setName('id')
+            option.setName('manga')
             .setDescription('The ID/Link (mangadex only) of the manga you want to display.')
             .setRequired(true)
             
@@ -20,10 +20,10 @@ module.exports = {
 
     async execute(interaction) {
         await interaction.deferReply();
-        let mangaId = interaction.options.getString('id');
+        let mangaId = interaction.options.getString('manga');
         
         if (mangaId.includes("mangadex")) {
-            mangaId = interaction.options.getString('id').match(/https:\/\/mangadex\.org\/title\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\//)[1];   
+            mangaId = interaction.options.getString('manga').match(/https:\/\/mangadex\.org\/title\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\//)[1];   
         }
 
         let resultM;

@@ -1,12 +1,14 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const { db } = require("./token.json");
 
-const sequelize = new Sequelize(String(db), {
+const sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: './db.db3',
     logging: false
 });
 
 const User = sequelize.define('User', {
-    userid: {
+    userId: {
         type: DataTypes.BIGINT,
         allowNull: false,
         primaryKey: true,
@@ -20,16 +22,23 @@ const User = sequelize.define('User', {
     currentSearch: {
         type: DataTypes.JSON,
         defaultValue: {
-            page: 0,
-            limit: 25,
-            search: {
-                contentRating: ['safe', 'suggestive', 'erotica'],
-                order: {
-                    rating: 'desc',
-                    followedCount: 'desc'
-                }
+            contentRating: ['safe', 'suggestive', 'erotica'],
+            order: {
+                rating: 'desc',
+                followedCount: 'desc'
             }
-        }
+        },
+        allowNull: false
+    },
+    page: {
+        type: DataTypes.TINYINT,
+        defaultValue: 0,
+        allowNull: false
+    },
+    limit: {
+        type: DataTypes.INTEGER,
+        defaultValue: 25,
+        allowNull: false
     },
     banned: {
         type: DataTypes.BOOLEAN,
@@ -63,4 +72,15 @@ const SearchTemplate = sequelize.define('SearchTemplate', {
     }
 });
 
-module.exports = { sequelize, User, SearchTemplate };
+const Setting = sequelize.define('Setting', {
+    userId: {
+        type: DataTypes.BIGINT,
+        references: {
+            model: User,
+            key: 'userId'
+        },
+        allowNull: false
+    }
+});
+
+module.exports = { sequelize, User, SearchTemplate, Setting };
