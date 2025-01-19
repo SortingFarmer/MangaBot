@@ -1,0 +1,9 @@
+{
+    "token": "YOUR_DISCORD_BOT_TOKEN_HERE",
+    "mangadexApi": {
+        "username": "YOUR_MANGADEX_ACCOUNT_USERNAME_HERE",
+        "password": "YOUR_MANGADEX_ACCOUNT_PASSWORD_HERE",
+        "client": "YOUR_MANGADEX_API_CLIENT_HER",
+        "clientSecret": "YOUR_MANGADEX_API_CLIENT_SECRET_HERE" 
+    }
+}

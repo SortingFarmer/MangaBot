@@ -51,6 +51,14 @@ const User = sequelize.define('User', {
     banned: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
+    },
+    premium: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    publicList: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
     }
 });
 
@@ -80,22 +88,4 @@ const SearchTemplate = sequelize.define('SearchTemplate', {
     }
 });
 
-const Setting = sequelize.define('Setting', {
-    userId: {
-        type: DataTypes.BIGINT,
-        references: {
-            model: User,
-            key: 'userId'
-        },
-        allowNull: false,
-        unique: true,
-        primaryKey: true
-    },
-    notification: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
-        allowNull: false
-    }
-});
-
-module.exports = { sequelize, User, SearchTemplate, Setting };
+module.exports = { sequelize, User, SearchTemplate };

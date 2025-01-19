@@ -1,7 +1,7 @@
 const axios = require('axios');
-const qs = require('qs');
 const { embed, mangadex } = require('./config.json');
 const ISO6391 = require('iso-639-1');
+const { ActionRowBuilder, ButtonBuilder, StringSelectMenuBuilder, ButtonStyle, ComponentType } = require('discord.js');
 
 module.exports = {
     wait: function(ms) { 
@@ -197,7 +197,74 @@ module.exports = {
         log: function(msg, type) {
             console.warn(`[${String(new Date().toLocaleString() + ":" + new Date().getMilliseconds())}] [${type}] ${msg}`);
         }
-    }
+    },
+    disableComponentsAfterTimeout: async function(interaction, components, timeout = 600000, interval = 60000) { // 10 minutes
+        try {
+            let remainingTime = timeout;
+        
+            const intervalId = setInterval(() => {
+                remainingTime -= interval;
+                this.logger.log(`Time left: ${remainingTime / 1000} seconds`, 'COUNTDOWN');
+        
+                if (remainingTime <= 0) {
+                    clearInterval(intervalId);
+                }
+            }, interval);
+        
+            await new Promise(resolve => setTimeout(resolve, timeout));
+            clearInterval(intervalId);
+        
+            const disabledComponents = this.cloneAndDisableComponents(components);
+            await interaction.editReply({ components: disabledComponents });
+        } catch (error) {
+            this.logger.error(error);
+        }
+        
+    },
+    cloneAndDisableComponents: function(rows) {
+        try {
+            let resultRows = [];
+            for (const row of rows) {
+                let tempRow = new ActionRowBuilder();
+                let components = [];
+                for (const component of row.components) {
+                    let componentString = JSON.stringify(component, null, 2);
+                    let componentJson = JSON.parse(componentString);
+                    if (componentJson.type == 2) {
+                        const button = new ButtonBuilder()
+                            .setLabel(componentJson.label)
+                            .setDisabled(true)
+                            .setEmoji(componentJson.emoji)
+    
+                        if (componentJson.url) {
+                            button.setURL(componentJson.url);
+                        } else {
+                            button.setCustomId(componentJson.custom_id);
+                        }
+                        button.setStyle(componentJson.style);
+    
+                        components.push(button);
+                    } else if (componentJson.type == 3) {
+                        const selectMenu = new StringSelectMenuBuilder()
+                            .setCustomId(componentJson.custom_id)
+                            .setPlaceholder(componentJson.placeholder)
+                            .addOptions(componentJson.options.map(option => ({
+                                label: option.label,
+                                value: option.value
+                            })))
+                            .setDisabled(true);
+    
+                        components.push(selectMenu);
+                    }
+                }
+                tempRow.addComponents(...components);
+                resultRows.push(tempRow);
+            }
+            return resultRows;
+        } catch (error) {
+            this.logger.error(error);
+        }
+    }        
 }
 
 module.exports.wait = module.exports.wait.bind(module.exports);
@@ -208,3 +275,5 @@ module.exports.logger.error = module.exports.logger.error.bind(module.exports);
 module.exports.logger.warn = module.exports.logger.warn.bind(module.exports);
 module.exports.logger.test = module.exports.logger.test.bind(module.exports);
 module.exports.logger.log = module.exports.logger.log.bind(module.exports);
+module.exports.cloneAndDisableComponents = module.exports.cloneAndDisableComponents.bind(module.exports);
+module.exports.disableComponentsAfterTimeout = module.exports.disableComponentsAfterTimeout.bind(module.exports);

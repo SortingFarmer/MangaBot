@@ -1,4 +1,4 @@
-const { AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require("discord.js");
+const { AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
 const { embed, mangadex } = require("../../../config.json");
 const emoji = require("../../../emojis.json");
 const { fetchMangaData, logger } = require("../../../util.js");
