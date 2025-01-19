@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, AttachmentBuilder } = require('discord.js');
 const { embed } = require('../../config.json');
 const emoji = require('../../emojis.json');
+const { loading } = require('../../util');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -9,7 +10,7 @@ module.exports = {
         .setContexts([0, 1, 2])
         .setIntegrationTypes([0, 1]),
 	async execute(interaction) {
-		const sent = await interaction.reply({ content: 'Pinging...', fetchReply: true });
+		const sent = await interaction.reply(loading(false, "Pinging", "Waiting for a response from discord"));
 		const timeTaken = sent.createdTimestamp - interaction.createdTimestamp;
 		const ping = timeTaken <= 200 ? emoji.goodping : timeTaken <= 1000 ? emoji.middleping : emoji.badping;
 		await interaction.editReply({
@@ -27,5 +28,5 @@ module.exports = {
             }],
 			ephemeral: false
 		});
-	},
+	}
 };

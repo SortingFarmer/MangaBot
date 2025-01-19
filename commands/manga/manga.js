@@ -2,7 +2,7 @@ const { SlashCommandBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, Acti
 const axios = require('axios');
 const { embed, mangadex } = require("../../config.json");
 const emoji = require("../../emojis.json");
-const { mangaEmbed } = require("../../util");
+const { mangaEmbed, loading } = require("../../util");
 
 
 module.exports = {
@@ -19,7 +19,7 @@ module.exports = {
         ),
 
     async execute(interaction) {
-        await interaction.deferReply();
+        await interaction.deferReply(loading());
         let mangaId = interaction.options.getString('manga');
         
         if (mangaId.includes("mangadex")) {
@@ -69,14 +69,14 @@ module.exports = {
             const comments = new ButtonBuilder();
             comments.setLabel('Comments');
             comments.setStyle(ButtonStyle.Link);
-            comments.setURL(`${mangadex.forum}/${resultR.data.statistics[mangaId].comments.threadId}`);
+            comments.setURL(`${mangadex.forum}/${resultR.data.statistics[mangaId].comments?.threadId}`);
 
             const row = new ActionRowBuilder();
             resultR.data.statistics[mangaId].comments == null ? row.addComponents(follow, link) : row.addComponents(follow, link, comments);
 
             await interaction.editReply({
                 files: [new AttachmentBuilder(embed.logo, embed.logoName)],
-                embeds: [mangaEmbed(resultM, resultR)],
+                embeds: [mangaEmbed(resultM.data.data, resultR)],
                 ephemeral: false,
                 components: [row]
             });

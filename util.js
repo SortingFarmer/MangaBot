@@ -1,14 +1,15 @@
 const axios = require('axios');
 const { embed, mangadex } = require('./config.json');
 const ISO6391 = require('iso-639-1');
-const { ActionRowBuilder, ButtonBuilder, StringSelectMenuBuilder, ButtonStyle, ComponentType } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder, StringSelectMenuBuilder, AttachmentBuilder } = require('discord.js');
+const emoji = require('./emojis.json');
 
 module.exports = {
     wait: function(ms) { 
         return new Promise(resolve => setTimeout(resolve, ms)); 
     },
     /**
-     * Get mangas and ratings
+     * Get mangas
      * @param {LinkStyle} baseUrl api link
      * @param {Number} page Page nr
      * @param {Number} limit How many mangas to fetch
@@ -71,16 +72,6 @@ module.exports = {
         try {
             let tempR;
 
-            // Add a request interceptor
-            axios.interceptors.request.use(function (config) {
-                // Log the request details
-                console.log('Request:', config);
-                return config;
-            }, function (error) {
-                // Handle the error
-                return Promise.reject(error);
-            });
-
             // Your API request
             tempR = await axios({
                 method: 'GET',
@@ -105,8 +96,7 @@ module.exports = {
             this.logger.error(error);
         }
     },
-    mangaEmbed: function(tempM, tempR) {
-        const manga = tempM.data.data;
+    mangaEmbed: function(manga, ratings) {
         const mangaId = manga.id;
         let altTitle = "";
         let tLanguages = "";
@@ -143,26 +133,26 @@ module.exports = {
                 name: "**Description**",
                 value: manga.attributes.description.en?.length > 1024 ? manga.attributes.description.en.substring(0, 1021) + "..." : manga.attributes.description.en || "No description available."
             },{
-                name: "**Alternative Titles**",
-                value: altTitle || "No alternative titles available."
-            },{
+                name: "**Alternative titles**",
+                value: altTitle.length > 1024 ? altTitle.substring(0, 1021) + "..." : altTitle || "No alternative titles available."
+            }, {
                 name: "**Information**",
                 value: `` +
                     `**Demographic:** ${manga.attributes.publicationDemographic || "Type not available."}\n` +
-                    `**Content Rating:** ${manga.attributes.contentRating}\n` +
+                    `**Content Rating:** ${manga.attributes.contentRating || "Content rating not available."}\n` +
+                    `**Authors:** ${manga.relationships.filter(r => r.type === "author").map(r => r.attributes?.name).join(", ") || "Artists not available."}\n` +
+                    `**Artists:** ${manga.relationships.filter(r => r.type === "artist").map(r => r.attributes?.name).join(", ") || "Artists not available."}\n` +
+                    `**Status:** ${manga.attributes.status || "Status not available."}\n` +
                     `**Original language:** ${ISO6391.getName(manga.attributes.originalLanguage)}\n` +
-                    `**Authors:** ${manga.relationships.filter(r => r.type === "author").map(r => r.attributes?.name).join(", ")}\n` +
-                    `**Artists:** ${manga.relationships.filter(r => r.type === "artist").map(r => r.attributes?.name).join(", ")}\n` +
-                    `**Status:** ${manga.attributes.status}\n` +
                     `${lastVolume}` +
                     `${lastChapter}` +
                     `**Year:** ${manga.attributes.year}\n` +
-                    `**Tags:** ${manga.attributes.tags.map(r => r.attributes.name.en).join(", ")}\n` +
-                    `**Comments:** ${tempR.data.statistics[mangaId].comments.repliesCount || 0}\n` +
-                    `**Follows:** ${tempR.data.statistics[mangaId].follows}\n` +
-                    `**Rating (Bayesian):** ${tempR.data.statistics[mangaId].rating.bayesian.toFixed(3)}\n` +
-                    `**Rating (Average):** ${tempR.data.statistics[mangaId].rating.average.toFixed(2)}\n` +
-                    `**Translated languages:** ${tLanguages}`
+                    `**Tags:** ${manga.attributes.tags.map(r => r.attributes.name.en).join(", ") || "No tags available."}\n` +
+                    `**Comments:** ${ratings.data.statistics[mangaId].comments?.repliesCount || 0}\n` +
+                    `**Follows:** ${ratings.data.statistics[mangaId].follows || 0}\n` +
+                    `**Rating [(Bayesian)](https://www.evanmiller.org/bayesian-average-ratings.html):** ${ratings.data.statistics[mangaId].rating.bayesian?.toFixed(4) || "No rating available."}\n` +
+                    `**Rating [(Average)](https://en.wikipedia.org/wiki/Average):** ${ratings.data.statistics[mangaId].rating.average?.toFixed(4) || "No rating available."}\n` +
+                    `**Translated languages:** ${tLanguages || "Translated languages not available"}`
             }],
             footer: {
                 text: embed.footNote,
@@ -233,13 +223,13 @@ module.exports = {
                     if (componentJson.type == 2) {
                         const button = new ButtonBuilder()
                             .setLabel(componentJson.label)
-                            .setDisabled(true)
-                            .setEmoji(componentJson.emoji)
+                            .setEmoji(componentJson.emoji);
     
                         if (componentJson.url) {
                             button.setURL(componentJson.url);
                         } else {
                             button.setCustomId(componentJson.custom_id);
+                            button.setDisabled(true);
                         }
                         button.setStyle(componentJson.style);
     
@@ -250,7 +240,9 @@ module.exports = {
                             .setPlaceholder(componentJson.placeholder)
                             .addOptions(componentJson.options.map(option => ({
                                 label: option.label,
-                                value: option.value
+                                value: option.value,
+                                description: option.description,
+                                emoji: option.emoji
                             })))
                             .setDisabled(true);
     
@@ -264,7 +256,26 @@ module.exports = {
         } catch (error) {
             this.logger.error(error);
         }
-    }        
+    },
+    loading: function(ephemeral = false, title = "Loading", description = "Fetching data") {
+        return {
+            content: "",
+            files: [new AttachmentBuilder(embed.logo, embed.logoName)],
+            embeds: [{
+                title: title,
+                description: `${emoji.loading} ${description}...`,
+                color: embed.color,
+                fields: [],
+                footer: {
+                    text: embed.footNote,
+                    icon_url: `attachment://${embed.logoName}`
+                },
+                timestamp: new Date().toISOString()
+            }],
+            ephemeral: ephemeral,
+            components: []
+        };
+    }
 }
 
 module.exports.wait = module.exports.wait.bind(module.exports);

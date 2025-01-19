@@ -22,11 +22,7 @@ const User = sequelize.define('User', {
     currentSearch: {
         type: DataTypes.JSON,
         defaultValue: {
-            contentRating: ['safe', 'suggestive', 'erotica'],
-            order: {
-                "rating": "desc",
-                "followedCount": "desc"
-            }
+            contentRating: ['safe', 'suggestive', 'erotica']
         },
         allowNull: false
     },
@@ -76,7 +72,18 @@ const SearchTemplate = sequelize.define('SearchTemplate', {
     },
     search: {
         type: DataTypes.JSON,
-        allowNull: false,
+        defaultValue: {
+            contentRating: ['safe', 'suggestive', 'erotica']
+        },
+        allowNull: false
+    },
+    order: {
+        type: DataTypes.JSON,
+        defaultValue: {
+            rating: 'desc',
+            followedCount: 'desc'
+        },
+        allowNull: false
     },
     userId: {
         type: DataTypes.BIGINT,

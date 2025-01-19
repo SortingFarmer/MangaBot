@@ -23,17 +23,17 @@ module.exports = {
                     value: `**/help** - Shows this help menu\n` +
                         `**/info** - Provides information about the bot\n` +
                         `**/ping** - Shows the bot's ping\n` +
-                        `**/stats** - Shows the bot's statistics\n` +
-                        `**/settings** - View and change your settings\n`,
+                        `${emoji.error} **/stats** - Shows the bot's statistics (Not working yet)\n` +
+                        `${emoji.beta.full} **/settings** - View and change your settings (Not affecting anything yet)\n`,
                 }, {
                     name: "Manga commands",
                     value: `**/manga [id/link]** - Displays a manga\n` +
-                        `**/follow [id/link]** - Follows or unfollows a manga\n` +
-                        `**/list (page number)** - Shows a list of followed manga\n` +
-                        `**/latest (page number)** - Shows the latest followed chapters\n` +
-                        `**/browse** - Browse some mangas\n` +
-                        `**/random** - Shows a random manga\n` +
-                        `**/search [name]** - Searches for a manga\n`
+                        `${emoji.error} **/follow [id/link]** - Follows or unfollows a manga (Not working yet)\n` +
+                        `${emoji.error} **/list (page number)** - Shows a list of followed manga (Not working yet)\n` +
+                        `${emoji.error} **/latest (page number)** - Shows the latest followed chapters (Not working yet)\n` +
+                        `${emoji.new.full} **/browse** - Browse some mangas\n` +
+                        `${emoji.new.full} **/random** - Shows a random manga\n` +
+                        `${emoji.new.full} **/search [name]** - Searches for a manga\n`
                 }],
                 color: embed.color,
                 footer: {

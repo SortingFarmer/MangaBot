@@ -1,27 +1,13 @@
 const { AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
 const { embed, mangadex } = require("../../../config.json");
 const emoji = require("../../../emojis.json");
-const { fetchMangaData, logger } = require("../../../util.js");
+const { fetchMangaData, logger, loading } = require("../../../util.js");
 const { User } = require('../../../db.js');
 
 module.exports = {
     name: "search",
     async execute(interaction) {
-        await interaction.update({
-            files: [new AttachmentBuilder(embed.logo, embed.logoName)],
-            embeds: [{
-                title: "Browse Manga",
-                description: `${emoji.loading} Fetching mangas...`,
-                color: embed.color,
-                footer: {
-                    text: embed.footNote,
-                    icon_url: `attachment://${embed.logoName}`
-                },
-                timestamp: new Date().toISOString()
-            }],
-            ephemeral: false,
-            components: []
-        });
+        await interaction.update(loading());
 
         let user = await User.findOne({ where: { userId: interaction.user.id } }).catch((error) => {
             logger.error(error);

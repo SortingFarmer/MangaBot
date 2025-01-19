@@ -2,27 +2,13 @@ const { AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = requ
 const axios = require('axios');
 const { embed, mangadex } = require("../../../config.json");
 const emoji = require("../../../emojis.json");
-const { mangaEmbed } = require("../../../util");
+const { mangaEmbed, loading } = require("../../../util");
 
 
 module.exports = {
     name: "manga",
     async execute(interaction) {
-        await interaction.update({
-            files: [new AttachmentBuilder(embed.logo, embed.logoName)],
-            embeds: [{
-                title: "Display Manga",
-                description: `${emoji.loading} Fetching manga...`,
-                color: embed.color,
-                footer: {
-                    text: embed.footNote,
-                    icon_url: `attachment://${embed.logoName}`
-                },
-                timestamp: new Date().toISOString()
-            }],
-            ephemeral: false,
-            components: []
-        });
+        await interaction.update(loading());
 
         let mangaId = interaction.values[0];
         let resultM;
@@ -85,7 +71,7 @@ module.exports = {
 
             await interaction.editReply({
                 files: [new AttachmentBuilder(embed.logo, embed.logoName)],
-                embeds: [mangaEmbed(resultM, resultR)],
+                embeds: [mangaEmbed(resultM.data.data, resultR)],
                 ephemeral: false,
                 components: [row]
             });

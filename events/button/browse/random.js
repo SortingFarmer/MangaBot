@@ -1,18 +1,13 @@
-const { SlashCommandBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
-const { loading, fetchStatisticsData, mangaEmbed, logger } = require('../../util');
+const { AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
+const { loading, fetchStatisticsData, mangaEmbed, logger } = require('../../../util');
 const { default: axios } = require('axios');
-const { mangadex, embed } = require('../../config.json');
-const emoji = require('../../emojis.json');
+const { mangadex, embed } = require('../../../config.json');
+const emoji = require('../../../emojis.json');
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('random')
-        .setDescription('View a random manga.')
-        .setContexts([0, 1, 2])
-        .setIntegrationTypes([0, 1]),
-
+    name: "random",
     async execute(interaction) {
-        await interaction.deferReply(loading());
+        await interaction.update(loading());
 
         let result;
         let stats;

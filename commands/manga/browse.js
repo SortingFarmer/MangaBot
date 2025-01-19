@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, AttachmentBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder } = require("discord.js");
 const axios = require('axios');
 const { embed, mangadex } = require("../../config.json");
-const { logger } = require('../../util.js');
+const { logger, loading } = require('../../util.js');
 const emoji = require("../../emojis.json");
 const { User, SearchTemplate } = require('../../db.js');
 
@@ -12,9 +12,9 @@ module.exports = {
         .setContexts([0, 1, 2])
         .setIntegrationTypes([0, 1]),
     async execute(interaction) {
-        await interaction.deferReply();
+        await interaction.deferReply(loading());
 
-        User.update({page: 0, limit: 25, currentSearch: {
+        User.update({page: 0, currentSearch: {
             contentRating: ['safe', 'suggestive', 'erotica'],
         }, order: {
             "rating": "desc",
