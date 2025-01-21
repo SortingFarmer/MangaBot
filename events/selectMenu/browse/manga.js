@@ -2,7 +2,7 @@ const { AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = requ
 const axios = require('axios');
 const { embed, mangadex } = require("../../../config.json");
 const emoji = require("../../../emojis.json");
-const { mangaEmbed, loading } = require("../../../util");
+const { mangaEmbed, loading, fetchChapterData } = require("../../../util");
 
 
 module.exports = {
@@ -13,6 +13,7 @@ module.exports = {
         let mangaId = interaction.values[0];
         let resultM;
         let resultR;
+        let resultC;
         
         try {
             resultM = await axios({
@@ -30,6 +31,8 @@ module.exports = {
                     manga: [mangaId]
                 }
             });
+
+            resultC = await fetchChapterData(mangadex.api, mangaId);
         } catch (error) {
             await interaction.editReply({ content: `${emoji.error} You entered an invalid id.`, ephemeral: true, embeds: [], });
         }
@@ -46,13 +49,13 @@ module.exports = {
         } else {
             const back = new ButtonBuilder();
             back.setLabel('Back to browsing');
-            back.setCustomId(`search_${interaction.user.id}`);
+            back.setCustomId(`search_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`);
             back.setStyle(ButtonStyle.Success);
             back.setEmoji(emoji.left);
 
             const follow = new ButtonBuilder();
             follow.setLabel('Follow manga');
-            follow.setCustomId(`follow_${interaction.user.id}`)
+            follow.setCustomId(`follow_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`)
             follow.setStyle(ButtonStyle.Primary);
             follow.setDisabled(true);
 
@@ -71,7 +74,7 @@ module.exports = {
 
             await interaction.editReply({
                 files: [new AttachmentBuilder(embed.logo, embed.logoName)],
-                embeds: [mangaEmbed(resultM.data.data, resultR)],
+                embeds: [mangaEmbed(resultM.data.data, resultR, resultC.data.data)],
                 ephemeral: false,
                 components: [row]
             });

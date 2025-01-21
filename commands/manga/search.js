@@ -75,46 +75,47 @@ module.exports = {
         }
 
         mangaList.addComponents(new StringSelectMenuBuilder()
-            .setCustomId(`manga_${interaction.user.id}`)
+            .setCustomId(`manga_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`)
             .setPlaceholder("Select a manga")
             .addOptions(mangaListStrings)
         );
 
         pages.addComponents(
             new ButtonBuilder()
-            .setLabel("1")
-            .setCustomId(`page_${interaction.user.id}_1`)
+            .setCustomId(`1`)
             .setStyle(ButtonStyle.Secondary)
-            .setDisabled(true),
+            .setDisabled(true)
+            .setEmoji(emoji.spacer),
             new ButtonBuilder()
-            .setLabel("2")
-            .setCustomId(`page_${interaction.user.id}_2`)
-            .setStyle(ButtonStyle.Secondary)
-            .setDisabled(false),
-            new ButtonBuilder()
-            .setLabel("3")
-            .setCustomId(`page_${interaction.user.id}_3`)
-            .setStyle(ButtonStyle.Secondary)
-            .setDisabled(false),
-            new ButtonBuilder()
-            .setLabel("Previous")
-            .setCustomId(`previousPage_${interaction.user.id}`)
+            .setLabel("Back")
+            .setCustomId(`backPage_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`)
             .setStyle(ButtonStyle.Success)
-            .setEmoji(emoji.left)
+            .setDisabled(true)
+            .setEmoji(emoji.left),
+            new ButtonBuilder()
+            .setLabel(`1`)
+            .setCustomId(`2`)
+            .setStyle(ButtonStyle.Secondary)
             .setDisabled(true),
             new ButtonBuilder()
             .setLabel("Next")
-            .setCustomId(`nextPage_${interaction.user.id}`)
+            .setCustomId(`nextPage_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`)
             .setStyle(ButtonStyle.Success)
             .setEmoji(emoji.right)
+            .setDisabled(mangaField.length < 25),
+            new ButtonBuilder()
+            .setCustomId(`3`)
+            .setStyle(ButtonStyle.Secondary)
+            .setEmoji(emoji.spacer)
+            .setDisabled(true)
         );
 
         await interaction.editReply({
             files: [new AttachmentBuilder(embed.logo, embed.logoName)],
             embeds: [{
                 title: "Browse Manga",
-                description: `Here are some manga you can read:\n` +
-                `Below you can press on the button for more information on the manga or to follow it.`,
+                description: `Here are ${mangaField.length} manga you can read:\n` +
+                `Below you can use the select menu for more information on the manga or to follow it.`,
                 color: embed.color,
                 fields: mangaField,
                 footer: {

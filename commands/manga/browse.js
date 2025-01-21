@@ -31,19 +31,19 @@ module.exports = {
 
         const search = new StringSelectMenuBuilder();
         search.setPlaceholder('Use a custom search template');
-        search.setCustomId(`searchTemplate_${interaction.user.id}`);
+        search.setCustomId(`searchTemplate_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`);
         search.addOptions(templates);
         search.setMaxValues(1);
 
         const noFilter = new ButtonBuilder();
         noFilter.setLabel("Use default filter");
-        noFilter.setCustomId(`search_${interaction.user.id}`);
+        noFilter.setCustomId(`search_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`);
         noFilter.setStyle(ButtonStyle.Success);
         noFilter.setEmoji(emoji.infos);
 
         const filter = new ButtonBuilder();
         filter.setLabel("Create custom filter");
-        filter.setCustomId(`filter-1_${interaction.user.id}`);
+        filter.setCustomId(`filter-1_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`);
         filter.setStyle(ButtonStyle.Primary);
         filter.setEmoji(emoji.question);
 
@@ -87,63 +87,5 @@ module.exports = {
             ephemeral: false,
             components: templates.length == 0 ? [row2] : [row, row2]
         });
-
-
-        /*
-        const sortBy = new StringSelectMenuBuilder();
-        sortBy.setCustomId("sortBy");
-        sortBy.setPlaceholder("Select how the mangas are sorted.");
-        sortBy.setMaxValues(1);
-        sortBy.addOptions(
-            new StringSelectMenuOptionBuilder()
-                .setLabel("Latest upload")
-                .setValue("latest_upload"),
-            new StringSelectMenuOptionBuilder()
-                .setLabel("Oldest upload")
-                .setValue("oldest_upload"),
-            new StringSelectMenuOptionBuilder()
-                .setLabel("Title Ascending")
-                .setValue("title_asc"),
-            new StringSelectMenuOptionBuilder()
-                .setLabel("Title Descending")
-                .setValue("title_desc"),
-            new StringSelectMenuOptionBuilder()
-                .setLabel("Highest rating")
-                .setValue("highest_ating"),
-            new StringSelectMenuOptionBuilder()
-                .setLabel("Lowest Rating")
-                .setValue("lowest_rating"),
-            new StringSelectMenuOptionBuilder()
-                .setLabel("Most follows")
-                .setValue("most_follows"),
-            new StringSelectMenuOptionBuilder()
-                .setLabel("Fewest follows")
-                .setValue("fewest_follows"),
-            new StringSelectMenuOptionBuilder()
-                .setLabel("Recently added")
-                .setValue("recently_added"),
-            new StringSelectMenuOptionBuilder()
-                .setLabel("Oldest added")
-                .setValue("oldest_added"),
-            new StringSelectMenuOptionBuilder()
-                .setLabel("Year Ascending")
-                .setValue("year_asc"),
-            new StringSelectMenuOptionBuilder()
-                .setLabel("Year Descending")
-                .setValue("year_desc")
-        );
-        const row1 = new ActionRowBuilder();
-        row1.addComponents(sortBy);
-
-        const tags = new StringSelectMenuBuilder();
-        tags.setCustomId("tags");
-        tags.setPlaceholder("Select tags to filter the mangas.");
-        tags.addOptions(
-
-        )
-
-        const row2 = new ActionRowBuilder();
-        row2.addComponents(tags);
-        */
     }
 }

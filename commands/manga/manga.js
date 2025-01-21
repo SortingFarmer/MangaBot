@@ -2,7 +2,7 @@ const { SlashCommandBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, Acti
 const axios = require('axios');
 const { embed, mangadex } = require("../../config.json");
 const emoji = require("../../emojis.json");
-const { mangaEmbed, loading } = require("../../util");
+const { mangaEmbed, loading, fetchChapterData } = require("../../util");
 
 
 module.exports = {
@@ -17,17 +17,23 @@ module.exports = {
             .setRequired(true)
             
         ),
-
     async execute(interaction) {
         await interaction.deferReply(loading());
+        let regex = /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/gm;
         let mangaId = interaction.options.getString('manga');
         
         if (mangaId.includes("mangadex")) {
-            mangaId = interaction.options.getString('manga').match(/https:\/\/mangadex\.org\/title\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\//)[1];   
+            mangaId = interaction.options.getString('manga').match(regex)[0];   
+        }
+
+        if (!regex.test(mangaId)) {
+            await interaction.editReply({ content: `${emoji.error} You entered an invalid link or id.`, ephemeral: true });
+            return;
         }
 
         let resultM;
         let resultR;
+        let resultC;
         
         try {
             resultM = await axios({
@@ -45,6 +51,8 @@ module.exports = {
                     manga: [mangaId]
                 }
             });
+
+            resultC = await fetchChapterData(mangadex.api, mangaId);
         } catch (error) {
             await interaction.editReply({ content: `${emoji.error} You entered an invalid id.`, ephemeral: true });
         }
@@ -57,7 +65,7 @@ module.exports = {
         } else {
             const follow = new ButtonBuilder();
             follow.setLabel('Follow manga');
-            follow.setCustomId("follow")
+            follow.setCustomId(`follow_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`)
             follow.setStyle(ButtonStyle.Primary);
             follow.setDisabled(true);
 
@@ -76,7 +84,7 @@ module.exports = {
 
             await interaction.editReply({
                 files: [new AttachmentBuilder(embed.logo, embed.logoName)],
-                embeds: [mangaEmbed(resultM.data.data, resultR)],
+                embeds: [mangaEmbed(resultM.data.data, resultR, resultC.data.data)],
                 ephemeral: false,
                 components: [row]
             });

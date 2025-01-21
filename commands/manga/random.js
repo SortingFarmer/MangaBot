@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
-const { loading, fetchStatisticsData, mangaEmbed, logger } = require('../../util');
+const { loading, fetchStatisticsData, mangaEmbed, logger, fetchChapterData } = require('../../util');
 const { default: axios } = require('axios');
 const { mangadex, embed } = require('../../config.json');
 const emoji = require('../../emojis.json');
@@ -16,6 +16,7 @@ module.exports = {
 
         let result;
         let stats;
+        let chapters;
         
         try {
             result = await axios({
@@ -28,19 +29,20 @@ module.exports = {
             });
     
             stats = await fetchStatisticsData(mangadex.api, [result.data.data.id]);
+            chapters = await fetchChapterData(mangadex.api, result.data.data.id)
         } catch (error) {
             logger.error(error);
         }
 
         const random = new ButtonBuilder();
         random.setLabel('Show another')
-        random.setCustomId(`random_${interaction.user.id}`)
+        random.setCustomId(`random_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`)
         random.setEmoji(emoji.right)
         random.setStyle(ButtonStyle.Success);
 
         const follow = new ButtonBuilder();
         follow.setLabel('Follow manga');
-        follow.setCustomId("follow")
+        follow.setCustomId(`follow_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`)
         follow.setStyle(ButtonStyle.Primary);
         follow.setDisabled(true);
 
@@ -60,7 +62,7 @@ module.exports = {
         await interaction.editReply({
             content: "",
             files: [new AttachmentBuilder(embed.logo, embed.logoName)],
-            embeds: [mangaEmbed(result.data.data, stats)],
+            embeds: [mangaEmbed(result.data.data, stats, chapters.data.data)],
             ephemeral: false,
             components: [row]
         });

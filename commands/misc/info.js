@@ -12,7 +12,7 @@ module.exports = {
 
     async execute(interaction) {
         const donate = new ButtonBuilder();
-        donate.setCustomId(`support_${interaction.user.id}`);
+        donate.setCustomId(`support_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`);
         donate.setLabel('Donation options');
         donate.setStyle(ButtonStyle.Secondary);
         donate.setEmoji(emoji.doller);

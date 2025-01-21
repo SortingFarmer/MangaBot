@@ -24,7 +24,7 @@ module.exports = {
                         `**/info** - Provides information about the bot\n` +
                         `**/ping** - Shows the bot's ping\n` +
                         `${emoji.error} **/stats** - Shows the bot's statistics (Not working yet)\n` +
-                        `${emoji.beta.full} **/settings** - View and change your settings (Not affecting anything yet)\n`,
+                        `${emoji.error} **/settings** - View and change your settings (Not working yet)\n`,
                 }, {
                     name: "Manga commands",
                     value: `**/manga [id/link]** - Displays a manga\n` +

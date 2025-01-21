@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { supportServer } = require('../config.json');
 const { error } = require('../emojis.json');
-const { logger } = require('../util.js');
+const { logger, cloneAndDisableComponents } = require('../util.js');
 const { User } = require('../db.js');
 
 const ignoreButton = [];
@@ -75,9 +75,13 @@ module.exports = {
 				for (const file of buttonFiles) {
 					const button = require(file);
 
-					if (button.name === interaction.customId.split('_')[0]) {
+					if (button.name === interaction.customId.split('_')[0].split('.')[0]) {
 						try {
-							if (interaction.customId.split('_')[1] == interaction.user.id) {
+							if (interaction.customId.split('_')[2] < Math.floor(Date.now()/1000)) {
+								const disabledComponents = cloneAndDisableComponents(interaction.message.components);
+            					await interaction.update({ components: disabledComponents, content: `${error} This message has expired!` });
+								return;
+							} else if (interaction.customId.split('_')[1] == interaction.user.id) {
 								await button.execute(interaction);
 								return;
 							} else {
@@ -115,9 +119,13 @@ module.exports = {
 				for (const file of selectMenuFiles) {
 					const selectMenu = require(file);
 
-					if (selectMenu.name === interaction.customId.split('_')[0]) {
+					if (selectMenu.name === interaction.customId.split('_')[0].split('.')[0]) {
 						try {
-							if (interaction.customId.split('_')[1] == interaction.user.id) {
+							if (interaction.customId.split('_')[2] < Math.floor(Date.now()/1000)) {
+								const disabledComponents = cloneAndDisableComponents(interaction.message.components);
+            					await interaction.update({ components: disabledComponents, content: `${error} This message has expired!` });
+								return;
+							} else if (interaction.customId.split('_')[1] == interaction.user.id) {
 								await selectMenu.execute(interaction);
 								return;
 							} else {
