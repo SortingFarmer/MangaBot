@@ -82,7 +82,7 @@ module.exports = {
             					await interaction.update({ components: disabledComponents, content: `${error} This message has expired!` });
 								return;
 							} else if (interaction.customId.split('_')[1] == interaction.user.id) {
-								await button.execute(interaction);
+								await button.execute(interaction, interaction.customId.split('_')[0].split('.')[1]);
 								return;
 							} else {
 								interaction.reply({ content: `${error} This is not your button!`, ephemeral: true });

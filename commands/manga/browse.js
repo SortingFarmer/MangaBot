@@ -1,6 +1,5 @@
 const { SlashCommandBuilder, AttachmentBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder } = require("discord.js");
-const axios = require('axios');
-const { embed, mangadex } = require("../../config.json");
+const { embed } = require("../../config.json");
 const { logger, loading } = require('../../util.js');
 const emoji = require("../../emojis.json");
 const { User, SearchTemplate } = require('../../db.js');
@@ -43,7 +42,7 @@ module.exports = {
 
         const filter = new ButtonBuilder();
         filter.setLabel("Create custom filter");
-        filter.setCustomId(`filter-1_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`);
+        filter.setCustomId(`filter.1_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`);
         filter.setStyle(ButtonStyle.Primary);
         filter.setEmoji(emoji.question);
 

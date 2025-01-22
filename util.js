@@ -389,7 +389,7 @@ module.exports = {
             ephemeral: ephemeral,
             components: []
         };
-    }
+    },
 }
 
 module.exports.wait = module.exports.wait.bind(module.exports);
