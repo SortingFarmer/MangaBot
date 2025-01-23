@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const { loading, fetchStatisticsData, mangaEmbed, logger, fetchChapterData } = require('../../util');
 const { default: axios } = require('axios');
-const { mangadex, embed } = require('../../config.json');
+const { mangadex, embed, expire } = require('../../config.json');
 const emoji = require('../../emojis.json');
 
 module.exports = {
@@ -36,13 +36,13 @@ module.exports = {
 
         const random = new ButtonBuilder();
         random.setLabel('Show another')
-        random.setCustomId(`random_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`)
+        random.setCustomId(`random_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`)
         random.setEmoji(emoji.right)
         random.setStyle(ButtonStyle.Success);
 
         const follow = new ButtonBuilder();
         follow.setLabel('Follow manga');
-        follow.setCustomId(`follow_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`)
+        follow.setCustomId(`follow_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`)
         follow.setStyle(ButtonStyle.Primary);
         follow.setDisabled(true);
 

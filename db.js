@@ -95,4 +95,27 @@ const SearchTemplate = sequelize.define('SearchTemplate', {
     }
 });
 
-module.exports = { sequelize, User, SearchTemplate };
+const Statistic = sequelize.define('Statistic', {
+    id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+        unique: true,
+        allowNull: false,
+        defaultValue: DataTypes.UUIDV4
+    },
+    name: {
+        type: DataTypes.STRING(100),
+        allowNull: false
+    },
+    type: {
+        type: DataTypes.STRING(100),
+        allowNull: false
+    },
+    uses: {
+        type: DataTypes.BIGINT,
+        defaultValue: 0,
+        allowNull: false
+    }
+})
+
+module.exports = { sequelize, User, SearchTemplate, Statistic };

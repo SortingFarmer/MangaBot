@@ -1,5 +1,5 @@
 const { AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
-const { embed, mangadex } = require("../../../config.json");
+const { embed, mangadex, expire } = require("../../../config.json");
 const emoji = require("../../../emojis.json");
 const { fetchMangaData, logger, loading } = require("../../../util.js");
 const { User } = require('../../../db.js');
@@ -57,7 +57,7 @@ module.exports = {
         }
 
         mangaList.addComponents(new StringSelectMenuBuilder()
-            .setCustomId(`manga_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`)
+            .setCustomId(`manga_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`)
             .setPlaceholder("Select a manga")
             .addOptions(mangaListStrings)
         );
@@ -70,7 +70,7 @@ module.exports = {
             .setEmoji(emoji.spacer),
             new ButtonBuilder()
             .setLabel("Back")
-            .setCustomId(`backPage_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`)
+            .setCustomId(`backPage_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`)
             .setStyle(ButtonStyle.Success)
             .setDisabled(userJson.page == 0)
             .setEmoji(emoji.left),
@@ -81,7 +81,7 @@ module.exports = {
             .setDisabled(true),
             new ButtonBuilder()
             .setLabel("Next")
-            .setCustomId(`nextPage_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`)
+            .setCustomId(`nextPage_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`)
             .setStyle(ButtonStyle.Success)
             .setEmoji(emoji.right)
             .setDisabled(mangaField.length < 25 || (userJson.page*userJson.limit) == 10000),
@@ -96,7 +96,7 @@ module.exports = {
             files: [new AttachmentBuilder(embed.logo, embed.logoName)],
             embeds: [{
                 title: "Browse Manga",
-                description: `Here are some manga you can read:\n` +
+                description: `Here are ${mangaField.length} results you can read:\n` +
                 `Below you can press on the button for more information on the manga or to follow it.`,
                 color: embed.color,
                 fields: mangaField,

@@ -1,4 +1,5 @@
 {
+	"beta": true,
 	"name": "MangaBot",
 	"description": "A simple bot that uses the MangaDex api to view, search and follow mangas on discord.",
 	"mangadex": {
@@ -8,7 +9,10 @@
 		"forum": "https://forums.mangadex.org/threads"
 	},
 	"github": "https://github.com/SortingFarmer/MangaBot",
-	"clientId": "1319982304872894495",
+	"clientId": {
+		"full": "1319982304872894495",
+		"beta": "1322344539452739656"
+	},
 	"guildId": "973661917291888680",
     "supportServer": "https://discord.gg/sk5tBM9nx6",
 	"embed": {
@@ -25,10 +29,13 @@
 		"name": "SortingFarmer"
 	},
 	"legal": {
-		"terms": "https://sites.google.com/view/mangabot/terms-of-service",
-		"privacy": "https://sites.google.com/view/mangabot/privacy-policy"
+		"terms": "https://sites.google.com/view/mangabot/legal/terms-of-service",
+		"privacy": "https://sites.google.com/view/mangabot/legal/privacy-policy"
 	},
 	"supportLinks": {
-		"topgg": "https://top.gg/"
-	}
+		"topgg": "https://top.gg/",
+		"site": "https://sites.google.com/view/mangabot/home",
+		"discord": "https://discord.gg/sk5tBM9nx6"
+	},
+	"expire": 600
 }

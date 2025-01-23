@@ -23,7 +23,7 @@ module.exports = {
                     value: `**/help** - Shows this help menu\n` +
                         `**/info** - Provides information about the bot\n` +
                         `**/ping** - Shows the bot's ping\n` +
-                        `${emoji.error} **/stats** - Shows the bot's statistics (Not working yet)\n` +
+                        `${emoji.new.full} **/stats** - Shows the bot's statistics\n` +
                         `${emoji.error} **/settings** - View and change your settings (Not working yet)\n`,
                 }, {
                     name: "Manga commands",

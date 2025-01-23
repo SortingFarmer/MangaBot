@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, AttachmentBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder } = require("discord.js");
-const { embed } = require("../../config.json");
+const { embed, expire } = require("../../config.json");
 const { logger, loading } = require('../../util.js');
 const emoji = require("../../emojis.json");
 const { User, SearchTemplate } = require('../../db.js');
@@ -30,19 +30,19 @@ module.exports = {
 
         const search = new StringSelectMenuBuilder();
         search.setPlaceholder('Use a custom search template');
-        search.setCustomId(`searchTemplate_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`);
+        search.setCustomId(`searchTemplate_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`);
         search.addOptions(templates);
         search.setMaxValues(1);
 
         const noFilter = new ButtonBuilder();
         noFilter.setLabel("Use default filter");
-        noFilter.setCustomId(`search_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`);
+        noFilter.setCustomId(`search_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`);
         noFilter.setStyle(ButtonStyle.Success);
         noFilter.setEmoji(emoji.infos);
 
         const filter = new ButtonBuilder();
         filter.setLabel("Create custom filter");
-        filter.setCustomId(`filter.1_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`);
+        filter.setCustomId(`filter.1_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`);
         filter.setStyle(ButtonStyle.Primary);
         filter.setEmoji(emoji.question);
 

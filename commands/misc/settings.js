@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const emoji = require('../../emojis.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -8,6 +9,6 @@ module.exports = {
         .setIntegrationTypes([0, 1]),
 
     async execute(interaction) {
-        await interaction.reply({ content: 'Settings are coming soon!', ephemeral: true });
+        await interaction.reply({ content: `${emoji.error} This command is not functional yet.`, ephemeral: true });
     }
 }

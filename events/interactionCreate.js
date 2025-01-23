@@ -4,7 +4,7 @@ const path = require('node:path');
 const { supportServer } = require('../config.json');
 const { error } = require('../emojis.json');
 const { logger, cloneAndDisableComponents } = require('../util.js');
-const { User } = require('../db.js');
+const { User, Statistic } = require('../db.js');
 
 const ignoreButton = [];
 const ignoreSelectMenu = [];
@@ -13,18 +13,44 @@ module.exports = {
 	name: Events.InteractionCreate,
 	async execute(interaction) {
 
+		let typeString = interaction.isChatInputCommand() ? 'command' : interaction.isButton() ? 'button' : interaction.isStringSelectMenu() ? 'select' : 'unknown';
+
+		await Statistic.findOrCreate({
+			where: { 
+				name: interaction?.customId?.split('_')[0]?.split('.')[0] || interaction.commandName,
+				type: typeString
+				},
+			defaults: { 
+				name: interaction?.customId?.split('_')[0]?.split('.')[0] || interaction.commandName,
+				type: typeString,
+				uses: 1
+			}
+		}).then(([statistic, created]) => {
+			if (created) {
+				logger.info(`New statistic (${interaction?.customId?.split('_')[0]?.split('.')[0] || interaction.commandName}, ${typeString}) created!`);
+			} else {
+				statistic.increment('uses', { by: 1 }).catch((error) => {
+					logger.error(error);
+				});
+			}
+		}).catch((error) => {
+			logger.error(error);
+		});
+		
 		await User.findOrCreate({
 			where: { userId: interaction.user.id },
 			defaults: { userId: interaction.user.id }
-		}).then(([user, created]) => {
+		}).then(async ([user, created]) => {
 			if (created) {
 				logger.info(`New user (${interaction.user.id}) created!`);
 			}
 			if (user.banned) {
-				interaction.reply({ content: 
+				await interaction.reply({ content: 
 					`${error} You are banned from using this service!\n` +
 					`You can get unbanned or find out why in the [support server](${supportServer}).`,
-					ephemeral: true
+					ephemeral: true,
+					flags: 4,
+					embeds: []
 				});
 				logger.info("User is banned!");
 				return;
@@ -32,6 +58,12 @@ module.exports = {
 		}).catch((error) => {
 			logger.error(error);
 		});
+
+		let user = await User.findOne({ where: { userId: interaction.user.id } })
+
+		if (user.toJSON().banned) {
+			return;
+		}
 
 		if (interaction.isChatInputCommand()) {
 

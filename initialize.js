@@ -1,10 +1,13 @@
 const { REST, Routes } = require('discord.js');
-const { clientId } = require('./config.json');
-const { token } = require('./token.json');
+const { clientId, beta } = require('./config.json');
+const { token, tokenBeta } = require('./token.json');
 const fs = require('node:fs');
 const path = require('node:path');
 const { logger } = require('./util.js');
 const { sequelize } = require('./db.js');
+
+const currentToken = beta ? tokenBeta : token;
+const id = beta ? clientId.beta : clientId.live;
 
 const commands = [];
 // Grab all the command folders from the commands directory you created earlier
@@ -28,7 +31,7 @@ for (const folder of commandFolders) {
 }
 
 // Construct and prepare an instance of the REST module
-const rest = new REST().setToken(token);
+const rest = new REST().setToken(currentToken);
 
 // and deploy your commands!
 (async () => {
@@ -38,7 +41,7 @@ const rest = new REST().setToken(token);
 		// The put method is used to fully refresh all commands in the guild with the current set
 		const data = await rest.put(
 			//Routes.applicationCommands(clientId),
-			Routes.applicationCommands("1322344539452739656"),
+			Routes.applicationCommands(id),
 			{ body: commands },
 		);
 

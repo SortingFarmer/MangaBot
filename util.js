@@ -1,8 +1,9 @@
 const axios = require('axios');
-const { embed, mangadex } = require('./config.json');
+const { embed, mangadex, expire } = require('./config.json');
 const ISO6391 = require('iso-639-1');
 const { ActionRowBuilder, ButtonBuilder, StringSelectMenuBuilder, AttachmentBuilder, AutoModerationRuleKeywordPresetType } = require('discord.js');
 const emoji = require('./emojis.json');
+const { mangaFunFacts } = require('./funfacts.json');
 
 module.exports = {
     wait: function(ms) { 
@@ -168,7 +169,7 @@ module.exports = {
         if (chapterData) {
             let char = {
                 replyMore: "╠",
-                replyNone: "║",
+                replyNone: "║  ",
                 reply: "╚",
                 people: "👥",
                 person: "👤",
@@ -377,7 +378,9 @@ module.exports = {
             files: [new AttachmentBuilder(embed.logo, embed.logoName)],
             embeds: [{
                 title: title,
-                description: `${emoji.loading} ${description}...`,
+                description: `${emoji.loading} ${description}...\n\n\n` +
+                `Here is a random funfact:\n` +
+                mangaFunFacts[Math.floor(Math.random() * mangaFunFacts.length)],
                 color: embed.color,
                 fields: [],
                 footer: {

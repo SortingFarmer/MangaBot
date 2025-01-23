@@ -1,6 +1,6 @@
 const { AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require("discord.js");
 const axios = require('axios');
-const { embed, mangadex } = require("../../../config.json");
+const { embed, mangadex, expire } = require("../../../config.json");
 const emoji = require("../../../emojis.json");
 const { mangaEmbed, loading, fetchChapterData } = require("../../../util");
 
@@ -49,13 +49,13 @@ module.exports = {
         } else {
             const back = new ButtonBuilder();
             back.setLabel('Back to browsing');
-            back.setCustomId(`search_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`);
+            back.setCustomId(`search_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`);
             back.setStyle(ButtonStyle.Success);
             back.setEmoji(emoji.left);
 
             const follow = new ButtonBuilder();
             follow.setLabel('Follow manga');
-            follow.setCustomId(`follow_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`)
+            follow.setCustomId(`follow_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`)
             follow.setStyle(ButtonStyle.Primary);
             follow.setDisabled(true);
 

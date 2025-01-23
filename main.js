@@ -1,9 +1,12 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
-const { token } = require('./token.json');
+const { beta } = require('./config.json');
+const { token, tokenBeta } = require('./token.json');
 const { logger } = require('./util.js');
 const { sequelize } = require('./db.js');
+
+const currentToken = beta ? tokenBeta : token;
 
 const client = new Client({
     intents: [
@@ -42,7 +45,7 @@ for (const file of eventFiles) {
     }
 }
 
-client.login(token);
+client.login(currentToken);
 
 const handleExit = () => {
     logger.info('Bot is stopping...');

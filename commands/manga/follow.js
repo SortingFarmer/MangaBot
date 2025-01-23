@@ -12,6 +12,6 @@ module.exports = {
             .setRequired(true)),
 
     async execute(interaction) {
-        await interaction.reply({ content: `following is coming soon!`, ephemeral: true });
+        await interaction.reply({ content: `${emoji.error} This command is not functional yet.`, ephemeral: true });
     }
 }

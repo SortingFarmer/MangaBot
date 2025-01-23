@@ -1,5 +1,5 @@
 const { AttachmentBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
-const { embed, mangadex } = require("../../../config.json");
+const { embed, mangadex, expire } = require("../../../config.json");
 const emoji = require("../../../emojis.json");
 const { fetchMangaData, logger, loading } = require("../../../util.js");
 const { User } = require('../../../db.js');
@@ -9,33 +9,18 @@ module.exports = {
     async execute(interaction) {
         await interaction.update(loading());
 
+        await User.increment('page', { by: 1, where: { userId: interaction.user.id } }).catch((error) => {
+            logger.error(error);
+        });
+
         let user = await User.findOne({ where: { userId: interaction.user.id } }).catch((error) => {
             logger.error(error);
         });
-        user = user.toJSON();
-
+        
         if (!user) {
             return logger.warn("User not found!");
         }
-
-        await User.destroy({ where: { userId: interaction.user.id } }).catch((error) => {
-            logger.error(error);
-        });
-
-        user = await User.create({
-            userId: interaction.user.id,
-            page: user.page + 1,
-            limit: user.limit,
-            currentSearch: user.currentSearch,
-            order: user.order,
-            banned: user.banned,
-            premium: user.premium,
-            publicList: user.publicList,
-            mangaList: user.mangaList,
-        }).catch((error) => {
-            logger.error(error);
-        });
-
+        
         let userJson = user.toJSON();
         
         let tempM = await fetchMangaData(mangadex.api, Number(userJson.page), Number(userJson.limit), userJson.currentSearch, userJson.order);
@@ -76,13 +61,10 @@ module.exports = {
         }
 
         mangaList.addComponents(new StringSelectMenuBuilder()
-            .setCustomId(`manga_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`)
+            .setCustomId(`manga_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`)
             .setPlaceholder("Select a manga")
             .addOptions(mangaListStrings)
         );
-
-        logger.json(user.toJSON())
-        logger.info('last')
 
         pages.addComponents(
             new ButtonBuilder()
@@ -92,7 +74,7 @@ module.exports = {
             .setEmoji(emoji.spacer),
             new ButtonBuilder()
             .setLabel("Back")
-            .setCustomId(`backPage_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`)
+            .setCustomId(`backPage_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`)
             .setStyle(ButtonStyle.Success)
             .setDisabled(userJson.page == 0)
             .setEmoji(emoji.left),
@@ -103,7 +85,7 @@ module.exports = {
             .setDisabled(true),
             new ButtonBuilder()
             .setLabel("Next")
-            .setCustomId(`nextPage_${interaction.user.id}_${Math.floor(Date.now()/1000) + 600}`)
+            .setCustomId(`nextPage_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`)
             .setStyle(ButtonStyle.Success)
             .setEmoji(emoji.right)
             .setDisabled(mangaField.length < 25 || (userJson.page*userJson.limit) == 10000),
@@ -118,7 +100,7 @@ module.exports = {
             files: [new AttachmentBuilder(embed.logo, embed.logoName)],
             embeds: [{
                 title: "Browse Manga",
-                description: `Here are some manga you can read:\n` +
+                description: `Here are ${mangaField.length} results you can read:\n` +
                 `Below you can press on the button for more information on the manga or to follow it.`,
                 color: embed.color,
                 fields: mangaField,
