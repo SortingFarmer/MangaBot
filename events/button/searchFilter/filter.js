@@ -1,118 +1,163 @@
-const { loading } = require("../../../util.js");
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, AttachmentBuilder } = require("discord.js");
-const emoji = require('../../../emojis.json');
-const { embed, expire } = require('../../../config.json');
-
+const { loading, logger } = require("../../../util.js");
+const {
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	AttachmentBuilder,
+} = require("discord.js");
+const emoji = require("../../../emojis.json");
+const { embed, expire } = require("../../../config.json");
+const stringSelect = require("../../../searchComponents.js");
 
 module.exports = {
-    name: "filter",
-    async execute(interaction, page) {
-        await interaction.update(loading());
+	name: "filter",
+	async execute(interaction, page) {
+		await interaction.update(loading());
 
-        const row1 = new ActionRowBuilder();
-        const row2 = new ActionRowBuilder();
-        const row3 = new ActionRowBuilder();
-        const row4 = new ActionRowBuilder();
-        const row5 = new ActionRowBuilder();
+		const row1 = new ActionRowBuilder();
+		const row2 = new ActionRowBuilder();
+		const row3 = new ActionRowBuilder();
+		const row4 = new ActionRowBuilder();
+		const row5 = new ActionRowBuilder();
+		let description = "";
+		logger.info("Filter page " + page);
 
-        if (page == 1) {
-    
-            const sort = new StringSelectMenuBuilder()
-                .setCustomId(`sort_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`)
-                .setPlaceholder("Sort by")
-                .addOptions([
-                    { label: "Latest Upload", value: `{"upload":"desc"}` },
-                    { label: "Oldest Upload", value: `{"upload":"asc"}` },
-                    { label: "Title Ascending", value: `{"title":"asc"}` },
-                    { label: "Title Descending", value: `{"title":"desc"}` },
-                    { label: "Highest rating", value: `{"rating":"desc"}` },
-                    { label: "Lowest rating", value: `{"rating":"asc"}` },
-                    { label: "Most follows", value: `{"follows":"desc"}` },
-                    { label: "Fewest follows", value: `{"follows":"asc"}` },
-                    { label: "Recently added", value: `{"created":"desc"}` },
-                    { label: "Oldest added", value: `{"created":"asc"}` },
-                    { label: "Year Ascending", value: `{"year":"asc"}` },
-                    { label: "Year Descending", value: `{"year":"desc"}` },
-                ])
-                .setMinValues(0)
-                .setMaxValues(1);
-    
-            const contentRating = new StringSelectMenuBuilder()
-                .setCustomId(`contentRating_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`)
-                .setPlaceholder('Choose the Content Rating(s)')
-                .addOptions([
-                    { label: 'Safe', value: 'safe' },
-                    { label: 'Suggestive', value: 'suggestive' },
-                    { label: 'Erotica', value: 'erotica' },
-                ])
-                .setMinValues(0)
-                .setMaxValues(3);
-    
-            const demographic = new StringSelectMenuBuilder()
-                .setCustomId(`demographic_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`)
-                .setPlaceholder('Choose the Demographic(s)')
-                .addOptions([
-                    { label: 'Shounen', value: 'shounen' },
-                    { label: 'Shoujo', value: 'shoujo' },
-                    { label: 'Seinen', value: 'seinen' },
-                    { label: 'Josei', value: 'josei' },
-                ])
-                .setMinValues(0)
-                .setMaxValues(4);
-    
-            const status = new StringSelectMenuBuilder()
-                .setCustomId(`status_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`)
-                .setPlaceholder('Choose the Status(es)')
-                .addOptions([
-                    { label: 'Ongoing', value: 'ongoing' },
-                    { label: 'Completed', value: 'completed' },
-                    { label: 'Hiatus', value: 'hiatus' },
-                    { label: 'Cancelled', value: 'cancelled' },
-                ])
-                .setMinValues(0)
-                .setMaxValues(4);
-    
-            row1.addComponents(sort);
-            row2.addComponents(contentRating);
-            row3.addComponents(demographic);
-            row4.addComponents(status);
+		if (page == 1) {
+			// sorting, content rating, demographic, status
+			description = `Choose here how you want the results to be sorted and if they should be included or excluded based on the content rating, demographic, and status.`;
 
-        } else if (page == 2) {
-            
-            
+			try {
+				row1.addComponents(
+					stringSelect.sortStringSelect(interaction.user.id)
+				);
+				row2.addComponents(
+					stringSelect.contentRatingStringSelect(interaction.user.id)
+				);
+				row3.addComponents(
+					stringSelect.demographicStringSelect(interaction.user.id)
+				);
+				row4.addComponents(
+					stringSelect.statusStringSelect(interaction.user.id)
+				);
+			} catch (error) {
+				logger.error(error);
+			}
+		} else if (page == 2) {
+			// include: format, genre, theme, theme2
+			description = `Choose here which formats, genres, themes you want to include in the results. (note: themes is split between two because there are too many)`;
 
-        }
+			try {
+				row1.addComponents(
+					stringSelect.formatStringSelect(interaction.user.id)
+				);
+				row2.addComponents(
+					stringSelect.genreStringSelect(interaction.user.id)
+				);
+				row3.addComponents(
+					stringSelect.themeOneStringSelect(interaction.user.id)
+				);
+				row4.addComponents(
+					stringSelect.themeTwoStringSelect(interaction.user.id)
+				);
+			} catch (error) {
+				logger.error(error);
+			}
+		} else if (page == 3) {
+			// exclude: format, genre, theme, theme2
+			description = `Choose here which formats, genres, themes you want to exclude from the results. (note: themes is split between two because there are too many)`;
 
-        const cancel = new ButtonBuilder()
-            .setLabel('Cancel')
-            .setCustomId(`cancel_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`)
-            .setStyle(ButtonStyle.Danger)
-            .setEmoji(emoji.xx);
-        const next = new ButtonBuilder()
-            .setLabel('Next')
-            .setCustomId(`filter.${page + 1}_${interaction.user.id}_${Math.floor(Date.now()/1000) + expire}`)
-            .setStyle(ButtonStyle.Success)
-            .setEmoji(emoji.right);
-        
-        row5.addComponents(cancel, next);
+			try {
+				row1.addComponents(
+					stringSelect.formatStringSelect(interaction.user.id, true)
+				);
+				row2.addComponents(
+					stringSelect.genreStringSelect(interaction.user.id, true)
+				);
+				row3.addComponents(
+					stringSelect.themeOneStringSelect(interaction.user.id, true)
+				);
+				row4.addComponents(
+					stringSelect.themeTwoStringSelect(interaction.user.id, true)
+				);
+			} catch (error) {
+				logger.error(error);
+			}
+		} else {
+			logger.error("Invalid page number");
+			description = `Invalid page number. Please try again.`;
 
-        await interaction.editReply({
-            content: "",
-            files: [new AttachmentBuilder(embed.logo, embed.logoName)],
-            embeds: [{
-                title: `Custom Filter - Page ${page}`,
-                description: `Customize the filters how you want and then click the **Next** button.\n` +
-                `You can also use the **Cancel** button to cancel the filter and instead use the default one.`,
-                color: embed.color,
-                fields: [],
-                footer: {
-                    text: embed.footNote,
-                    icon_url: `attachment://${embed.logoName}`
-                },
-                timestamp: new Date().toISOString()
-            }],
-            ephemeral: false,
-            components: [row1, row2, row3, row4, row5]
-        });
-    }
-}
+			const blank = new ButtonBuilder()
+				.setDisabled(true)
+				.setLabel(`INVALID PAGE ${page}`)
+				.setEmoji(emoji.error)
+				.setStyle(ButtonStyle.Secondary);
+
+			blank.setCustomId(`ajrtxcvb${Math.random()}`);
+			row1.addComponents(blank);
+			blank.setCustomId(`ahefgxx${Math.random()}`);
+			row2.addComponents(blank);
+			blank.setCustomId(`sdfawer${Math.random()}`);
+			row3.addComponents(blank);
+			blank.setCustomId(`asdgsdfgg${Math.random()}`);
+			row4.addComponents(blank);
+		}
+
+		const cancel = new ButtonBuilder()
+			.setLabel("Cancel")
+			.setCustomId(
+				`cancel_${interaction.user.id}_${
+					Math.floor(Date.now() / 1000) + expire
+				}`
+			)
+			.setStyle(ButtonStyle.Danger)
+			.setEmoji(emoji.xx);
+		const back = new ButtonBuilder()
+			.setLabel("Back")
+			.setCustomId(
+				`filter.${Number(page) - 1}_${interaction.user.id}_${
+					Math.floor(Date.now() / 1000) + expire
+				}`
+			)
+			.setStyle(ButtonStyle.Secondary)
+			.setEmoji(emoji.left);
+		const next = new ButtonBuilder()
+			.setLabel("Next")
+			.setCustomId(
+				`filter.${Number(page) + 1}_${interaction.user.id}_${
+					Math.floor(Date.now() / 1000) + expire
+				}`
+			)
+			.setStyle(ButtonStyle.Success)
+			.setEmoji(emoji.right);
+
+		row5.addComponents(page == 1 ? [cancel, next] : [cancel, back, next]);
+
+		try {
+			await interaction.editReply({
+				content: "",
+				files: [new AttachmentBuilder(embed.logo, embed.logoName)],
+				embeds: [
+					{
+						title: `Custom Filter - Page ${page}`,
+						description:
+							description +
+							`\n\n` +
+							`Customize the filters how you want and then click the **Next** button.\n` +
+							`You can also use the **Cancel** button to cancel the filter and instead use the default one.`,
+						color: embed.color,
+						fields: [],
+						footer: {
+							text: embed.footNote,
+							icon_url: `attachment://${embed.logoName}`,
+						},
+						timestamp: new Date().toISOString(),
+					},
+				],
+				ephemeral: false,
+				components: [row1, row2, row3, row4, row5],
+			});
+		} catch (error) {
+			logger.error(error);
+		}
+	},
+};
