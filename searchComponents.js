@@ -5,6 +5,7 @@ const {
 	ButtonStyle,
 } = require("discord.js");
 const { expire } = require("./config.json");
+const emoji = require("./emojis.json");
 
 module.exports = {
 	sortStringSelect(id) {
@@ -485,5 +486,47 @@ module.exports = {
 			.setMaxValues(14);
 
 		return themeTwo;
+	},
+	year(id, reset = false) {
+		const addYear = new ButtonBuilder()
+			.setCustomId(
+				`year.${reset}_${id}_${Math.floor(Date.now() / 1000) + expire}`
+			)
+			.setLabel(reset ? "Reset release year" : "Set release year")
+			.setStyle(ButtonStyle.Secondary)
+			.setEmoji(reset ? emoji.xx : emoji.check);
+
+		return addYear;
+	},
+	tagMode(id, and = true, included = true) {
+		let mode = and ? '"and"' : '"or"';
+		const tagMode = new ButtonBuilder()
+			.setCustomId(
+				`tagMode.${and}.${included}_${id}_${
+					Math.floor(Date.now() / 1000) + expire
+				}`
+			)
+			.setLabel(
+				included
+					? `Set inclusion mode to ${mode}`
+					: `Set exclusion mode to ${mode}`
+			)
+			.setStyle(ButtonStyle.Secondary);
+		// tagMode.setEmoji(and ? emoji.check : emoji.xx);
+
+		return tagMode;
+	},
+	searchTitle(id, reset = false) {
+		const search = new ButtonBuilder()
+			.setCustomId(
+				`searchTitle.${reset}_${id}_${
+					Math.floor(Date.now() / 1000) + expire
+				}`
+			)
+			.setLabel(reset ? `Reset search` : `Add search`)
+			.setStyle(ButtonStyle.Secondary)
+			.setEmoji(reset ? emoji.xx : emoji.check);
+
+		return search;
 	},
 };

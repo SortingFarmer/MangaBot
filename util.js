@@ -227,10 +227,7 @@ module.exports = {
 					id: chapter.id,
 					vol: chapter.attributes.volume || 0,
 					chap: chapter.attributes.chapter || 0,
-					lang:
-						ISO6391.getName(
-							chapter.attributes.translatedLanguage.split("-")[0]
-						) || "No language.",
+					lang: chapter.attributes.translatedLanguage,
 					group:
 						chapter.relationships
 							.filter((r) => r.type === "scanlation_group")

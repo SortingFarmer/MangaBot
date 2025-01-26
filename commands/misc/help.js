@@ -35,7 +35,7 @@ module.exports = {
 								`**/manga [id/link]** - Displays a manga\n` +
 								`${emoji.error} **/follow [id/link]** - Follows or unfollows a manga (Not working yet)\n` +
 								`${emoji.error} **/list (page number)** - Shows a list of followed manga (Not working yet)\n` +
-								`${emoji.error} **/latest (page number)** - Shows the latest followed chapters (Not working yet)\n` +
+								`${emoji.error} **/latest (page number)** - Shows the latest chapters of followed mangas (Not working yet)\n` +
 								`${emoji.new.full} **/browse** - Browse some mangas\n` +
 								`${emoji.new.full} **/random** - Shows a random manga\n` +
 								`${emoji.new.full} **/search [name]** - Searches for a manga\n`,

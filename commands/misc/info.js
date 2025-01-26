@@ -14,6 +14,7 @@ const {
 	owner,
 	legal,
 	expire,
+	supportLinks,
 } = require("../../config.json");
 const emoji = require("../../emojis.json");
 const { version, license } = require("../../package.json");
@@ -85,7 +86,8 @@ module.exports = {
 								name: "**Version:**",
 								value:
 									`The current version of ${name} is *${version}*\n` +
-									`You can view the latest release and its notes on the [GitHub](${github}/commit/main).`,
+									`You can view the latest release and its notes on the [GitHub](${github}/commit/main).\n` +
+									`Or you can also read the latest releasenotes on our [website](${supportLinks.site}/changelogs/v0-2-0)`,
 							},
 							{
 								name: "**Other notes:**",

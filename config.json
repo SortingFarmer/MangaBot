@@ -34,7 +34,8 @@
 	},
 	"supportLinks": {
 		"topgg": "https://top.gg/",
-		"site": "https://sites.google.com/view/mangabot/home",
+		"site": "https://sites.google.com/view/mangabot",
+		"github": "https://github.com/SortingFarmer/MangaBot",
 		"discord": "https://discord.gg/sk5tBM9nx6"
 	},
 	"expire": 600

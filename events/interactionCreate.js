@@ -173,7 +173,8 @@ module.exports = {
 									interaction,
 									interaction.customId
 										.split("_")[0]
-										.split(".")[1]
+										.split(".")
+										.slice(1)
 								);
 								return;
 							} else {
@@ -256,7 +257,8 @@ module.exports = {
 									interaction,
 									interaction.customId
 										.split("_")[0]
-										.split(".")[1]
+										.split(".")
+										.slice(1)
 								);
 								return;
 							} else {

@@ -140,8 +140,10 @@ module.exports = {
 				{
 					title: "Browse Manga",
 					description:
-						`Here are ${mangaField.length} results you can read:\n` +
-						`Below you can press on the button for more information on the manga or to follow it.`,
+						mangaField.length != 0
+							? `Here are ${mangaField.length} results you can read:\n` +
+							  `Below you can use the select menu for more information on the manga or to follow it.`
+							: `There are no results!`,
 					color: embed.color,
 					fields: mangaField,
 					footer: {
@@ -152,7 +154,7 @@ module.exports = {
 				},
 			],
 			ephemeral: false,
-			components: [mangaList, pages],
+			components: mangaList.length != 0 ? [mangaList, pages] : [],
 		});
 	},
 };

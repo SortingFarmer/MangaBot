@@ -11,9 +11,25 @@ const { fetchMangaData, logger, loading } = require("../../../util.js");
 const { User } = require("../../../db.js");
 
 module.exports = {
-	name: "search",
+	name: "cancelFilter",
 	async execute(interaction) {
 		await interaction.update(loading());
+
+		await User.update(
+			{
+				page: 0,
+				currentSearch: {
+					contentRating: ["safe", "suggestive", "erotica"],
+				},
+				order: {
+					rating: "desc",
+					followedCount: "desc",
+				},
+			},
+			{ where: { userId: interaction.user.id } }
+		).catch((error) => {
+			logger.error(error);
+		});
 
 		let user = await User.findOne({
 			where: { userId: interaction.user.id },

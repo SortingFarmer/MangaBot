@@ -26,62 +26,70 @@ module.exports = {
 			// sorting, content rating, demographic, status
 			description = `Choose here how you want the results to be sorted and if they should be included or excluded based on the content rating, demographic, and status.`;
 
-			try {
-				row1.addComponents(
-					stringSelect.sortStringSelect(interaction.user.id)
-				);
-				row2.addComponents(
-					stringSelect.contentRatingStringSelect(interaction.user.id)
-				);
-				row3.addComponents(
-					stringSelect.demographicStringSelect(interaction.user.id)
-				);
-				row4.addComponents(
-					stringSelect.statusStringSelect(interaction.user.id)
-				);
-			} catch (error) {
-				logger.error(error);
-			}
+			row1.addComponents(
+				stringSelect.sortStringSelect(interaction.user.id)
+			);
+			row2.addComponents(
+				stringSelect.contentRatingStringSelect(interaction.user.id)
+			);
+			row3.addComponents(
+				stringSelect.demographicStringSelect(interaction.user.id)
+			);
+			row4.addComponents(
+				stringSelect.statusStringSelect(interaction.user.id)
+			);
 		} else if (page == 2) {
 			// include: format, genre, theme, theme2
 			description = `Choose here which formats, genres, themes you want to include in the results. (note: themes is split between two because there are too many)`;
 
-			try {
-				row1.addComponents(
-					stringSelect.formatStringSelect(interaction.user.id)
-				);
-				row2.addComponents(
-					stringSelect.genreStringSelect(interaction.user.id)
-				);
-				row3.addComponents(
-					stringSelect.themeOneStringSelect(interaction.user.id)
-				);
-				row4.addComponents(
-					stringSelect.themeTwoStringSelect(interaction.user.id)
-				);
-			} catch (error) {
-				logger.error(error);
-			}
+			row1.addComponents(
+				stringSelect.formatStringSelect(interaction.user.id)
+			);
+			row2.addComponents(
+				stringSelect.genreStringSelect(interaction.user.id)
+			);
+			row3.addComponents(
+				stringSelect.themeOneStringSelect(interaction.user.id)
+			);
+			row4.addComponents(
+				stringSelect.themeTwoStringSelect(interaction.user.id)
+			);
 		} else if (page == 3) {
 			// exclude: format, genre, theme, theme2
 			description = `Choose here which formats, genres, themes you want to exclude from the results. (note: themes is split between two because there are too many)`;
 
-			try {
-				row1.addComponents(
-					stringSelect.formatStringSelect(interaction.user.id, true)
-				);
-				row2.addComponents(
-					stringSelect.genreStringSelect(interaction.user.id, true)
-				);
-				row3.addComponents(
-					stringSelect.themeOneStringSelect(interaction.user.id, true)
-				);
-				row4.addComponents(
-					stringSelect.themeTwoStringSelect(interaction.user.id, true)
-				);
-			} catch (error) {
-				logger.error(error);
-			}
+			row1.addComponents(
+				stringSelect.formatStringSelect(interaction.user.id, true)
+			);
+			row2.addComponents(
+				stringSelect.genreStringSelect(interaction.user.id, true)
+			);
+			row3.addComponents(
+				stringSelect.themeOneStringSelect(interaction.user.id, true)
+			);
+			row4.addComponents(
+				stringSelect.themeTwoStringSelect(interaction.user.id, true)
+			);
+		} else if (page == 4) {
+			// set year, tags inclusion and exclusion mode, search
+			description = ``;
+
+			row1.addComponents(
+				stringSelect.year(interaction.user.id),
+				stringSelect.year(interaction.user.id, true)
+			);
+			row2.addComponents(
+				stringSelect.tagMode(interaction.user.id, true, true),
+				stringSelect.tagMode(interaction.user.id, false, true)
+			);
+			row3.addComponents(
+				stringSelect.tagMode(interaction.user.id, false, false),
+				stringSelect.tagMode(interaction.user.id, true, false)
+			);
+			row4.addComponents(
+				stringSelect.searchTitle(interaction.user.id),
+				stringSelect.searchTitle(interaction.user.id, true)
+			);
 		} else {
 			logger.error("Invalid page number");
 			description = `Invalid page number. Please try again.`;
@@ -105,7 +113,7 @@ module.exports = {
 		const cancel = new ButtonBuilder()
 			.setLabel("Cancel")
 			.setCustomId(
-				`cancel_${interaction.user.id}_${
+				`cancelFilter_${interaction.user.id}_${
 					Math.floor(Date.now() / 1000) + expire
 				}`
 			)
@@ -118,7 +126,7 @@ module.exports = {
 					Math.floor(Date.now() / 1000) + expire
 				}`
 			)
-			.setStyle(ButtonStyle.Secondary)
+			.setStyle(ButtonStyle.Danger)
 			.setEmoji(emoji.left);
 		const next = new ButtonBuilder()
 			.setLabel("Next")
@@ -130,7 +138,7 @@ module.exports = {
 			.setStyle(ButtonStyle.Success)
 			.setEmoji(emoji.right);
 
-		row5.addComponents(page == 1 ? [cancel, next] : [cancel, back, next]);
+		row5.addComponents(page == 1 ? [cancel, next] : [back, next]);
 
 		try {
 			await interaction.editReply({

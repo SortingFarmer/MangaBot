@@ -104,7 +104,7 @@ module.exports = {
 			embeds: [
 				{
 					title: `Statistics`,
-					description: ``,
+					description: `Here you can see how often slash commands, buttons and select menus are used as well as the amount of users, banned users, created search templates and the uptime of the bot.`,
 					color: embed.color,
 					fields: fields,
 					footer: {
