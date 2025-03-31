@@ -94,6 +94,7 @@ module.exports = {
 				{ label: "Shoujo", value: "shoujo" },
 				{ label: "Seinen", value: "seinen" },
 				{ label: "Josei", value: "josei" },
+				{ label: "None", value: "none" },
 			])
 			.setMinValues(0)
 			.setMaxValues(4);
@@ -489,6 +490,7 @@ module.exports = {
 	},
 	year(id, reset = false) {
 		const addYear = new ButtonBuilder()
+			.setDisabled(true)
 			.setCustomId(
 				`year.${reset}_${id}_${Math.floor(Date.now() / 1000) + expire}`
 			)
@@ -498,35 +500,58 @@ module.exports = {
 
 		return addYear;
 	},
-	tagMode(id, and = true, included = true) {
+	tagMode(id, and = true, included = true, title = false) {
 		let mode = and ? '"and"' : '"or"';
 		const tagMode = new ButtonBuilder()
+			.setDisabled(true)
 			.setCustomId(
-				`tagMode.${and}.${included}_${id}_${
-					Math.floor(Date.now() / 1000) + expire
-				}`
+				title
+					? `disabled.${and}.${included}`
+					: `tagMode.${and}.${included}_${id}_${
+							Math.floor(Date.now() / 1000) + expire
+					  }`
 			)
 			.setLabel(
-				included
-					? `Set inclusion mode to ${mode}`
-					: `Set exclusion mode to ${mode}`
+				title
+					? included
+						? "Set tags included mode:"
+						: "Set tags excluded mode:"
+					: mode
 			)
 			.setStyle(ButtonStyle.Secondary);
-		// tagMode.setEmoji(and ? emoji.check : emoji.xx);
+		// tagMode.setDisabled(title);
+		if (title) tagMode.setEmoji(included ? emoji.check : emoji.xx);
 
 		return tagMode;
 	},
 	searchTitle(id, reset = false) {
 		const search = new ButtonBuilder()
+			.setDisabled(true)
 			.setCustomId(
 				`searchTitle.${reset}_${id}_${
 					Math.floor(Date.now() / 1000) + expire
 				}`
 			)
-			.setLabel(reset ? `Reset search` : `Add search`)
+			.setLabel(reset ? `Reset search` : `Set search`)
 			.setStyle(ButtonStyle.Secondary)
 			.setEmoji(reset ? emoji.xx : emoji.check);
 
 		return search;
+	},
+	creator(id, author = true, reset = false) {
+		const creator = new ButtonBuilder()
+			.setDisabled(true)
+			.setCustomId(
+				`creator.${author}.${reset}_${id}_${
+					Math.floor(Date.now() / 1000) + expire
+				}`
+			)
+			.setLabel(
+				`${reset ? "Reset" : "Manage"} ${author ? "Author" : "Artist"}s`
+			)
+			.setStyle(ButtonStyle.Secondary)
+			.setEmoji(reset ? emoji.xx : emoji.check);
+
+		return creator;
 	},
 };

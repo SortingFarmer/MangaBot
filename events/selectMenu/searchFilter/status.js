@@ -10,10 +10,10 @@ const {
 const emoji = require("../../../emojis.json");
 const { embed, expire } = require("../../../config.json");
 const { User } = require("../../../db.js");
-const stringSelect = require("../../../searchComponents.js");
+const {} = require("../../../searchComponents.js");
 
 module.exports = {
-	name: "sort",
+	name: "status",
 	async execute(interaction) {
 		await interaction.update(
 			loading(
@@ -26,25 +26,24 @@ module.exports = {
 			)
 		);
 
-		let user = await User.findOne({
+		const user = await User.findOne({
 			where: { userId: interaction.user.id },
 		});
 
 		let currentSearch = await user.getDataValue("currentSearch");
+		let order = await user.getDataValue("order");
+		currentSearch.status = interaction.values;
 
 		await User.update(
-			{ order: JSON.parse(interaction.values[0]) },
+			{ currentSearch: currentSearch },
 			{ where: { userId: interaction.user.id } }
 		);
 
 		await interaction.editReply({
-			content: `${emoji.infos} Sorting method set!`,
+			content: `${emoji.infos} Status set!`,
 			embed: [
 				new EmbedBuilder(interaction.embed).setFields(
-					currentSearchFields(
-						JSON.parse(interaction.values[0]),
-						currentSearch
-					)
+					currentSearchFields(order, currentSearch)
 				),
 			],
 		});

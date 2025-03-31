@@ -171,7 +171,7 @@ module.exports = {
 							) {
 								await button.execute(
 									interaction,
-									interaction.customId
+									...interaction.customId
 										.split("_")[0]
 										.split(".")
 										.slice(1)
@@ -255,7 +255,7 @@ module.exports = {
 							) {
 								await selectMenu.execute(
 									interaction,
-									interaction.customId
+									...interaction.customId
 										.split("_")[0]
 										.split(".")
 										.slice(1)

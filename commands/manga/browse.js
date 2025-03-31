@@ -20,7 +20,7 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply(loading());
 
-		User.update(
+		await User.update(
 			{
 				page: 0,
 				currentSearch: {
